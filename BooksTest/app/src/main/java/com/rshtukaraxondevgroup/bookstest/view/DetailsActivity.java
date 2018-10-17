@@ -11,6 +11,7 @@ import com.rshtukaraxondevgroup.bookstest.R;
 import com.rshtukaraxondevgroup.bookstest.model.BookModel;
 import com.rshtukaraxondevgroup.bookstest.presenter.BookPresenter;
 import com.rshtukaraxondevgroup.bookstest.presenter.DetailsPresenter;
+import com.rshtukaraxondevgroup.bookstest.repository.NetworkManager;
 import com.rshtukaraxondevgroup.bookstest.repository.RepositoryProvider;
 
 public class DetailsActivity extends MvpAppCompatActivity implements DetailsView {
@@ -65,7 +66,7 @@ public class DetailsActivity extends MvpAppCompatActivity implements DetailsView
     @ProvidePresenter(type = PresenterType.GLOBAL)
     DetailsPresenter provideRepositoryPresenter() {
         DetailsPresenter repositoryPresenter = new DetailsPresenter();
-        repositoryPresenter.setDataStoreFactory(RepositoryProvider.getInstance(this));
+        repositoryPresenter.setDataStoreFactory(RepositoryProvider.getInstance(new NetworkManager(this)));
         return repositoryPresenter;
     }
 }

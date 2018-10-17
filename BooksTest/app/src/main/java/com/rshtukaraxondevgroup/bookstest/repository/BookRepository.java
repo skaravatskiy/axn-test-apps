@@ -22,18 +22,18 @@ import io.reactivex.schedulers.Schedulers;
 public class BookRepository {
     private BookDao bookDao;
     private BookApi api;
-    private Context context;
+    private NetworkManager networkManager;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public BookRepository(Context context) {
+    public BookRepository(NetworkManager networkManager) {
         BookService bookService = new BookService();
         this.api = bookService.getClient().create(BookApi.class);
         this.bookDao = App.getDatabase().bookDao();
-        this.context = context;
+        this.networkManager = networkManager;
     }
 
     public Single<List<BookModel>> getBooksList(int page) {
-        if (isNetworkAvailable()) {
+        if (networkManager.isNetworkAvailable()) {
             return api.getBooks(page)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -86,11 +86,5 @@ public class BookRepository {
         return bookDao.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

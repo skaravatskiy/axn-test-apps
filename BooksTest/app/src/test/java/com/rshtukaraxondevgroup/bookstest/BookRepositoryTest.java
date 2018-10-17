@@ -6,6 +6,7 @@ import android.util.Log;
 import com.rshtukaraxondevgroup.bookstest.database.BookDao;
 import com.rshtukaraxondevgroup.bookstest.repository.BookApi;
 import com.rshtukaraxondevgroup.bookstest.repository.BookRepository;
+import com.rshtukaraxondevgroup.bookstest.repository.NetworkManager;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,7 +37,7 @@ public class BookRepositoryTest {
     public final MockitoRule rule = MockitoJUnit.rule();
 
     @Mock
-    Context context;
+    NetworkManager networkManager;
     @Mock
     BookApi bookApi;
     @Mock
@@ -47,7 +48,7 @@ public class BookRepositoryTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        bookRepository = new BookRepository(context);
+        bookRepository = new BookRepository(networkManager);
 
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
         RxAndroidPlugins.setMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
@@ -55,8 +56,14 @@ public class BookRepositoryTest {
 
     @Test
     public void getBooksList() {
-//        when(bookApi.getBooks(1)).thenReturn(TestHelper.createSingleListOfBooks(10));
-//        bookRepository.getBooksList(1);
+        executorService.execute(() -> {
+        when(bookApi.getBooks(1)).thenReturn(TestHelper.createSingleListOfBooks(10));
+        bookRepository.getBooksList(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> Assert.assertEquals(list, TestHelper.createSingleListOfBooks(1)))
+                .dispose();
+        });
     }
 
     @Test

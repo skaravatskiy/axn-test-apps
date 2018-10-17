@@ -20,6 +20,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.rshtukaraxondevgroup.bookstest.model.BookModel;
 import com.rshtukaraxondevgroup.bookstest.R;
 import com.rshtukaraxondevgroup.bookstest.presenter.BookPresenter;
+import com.rshtukaraxondevgroup.bookstest.repository.NetworkManager;
 import com.rshtukaraxondevgroup.bookstest.repository.RepositoryProvider;
 
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
     @ProvidePresenter(type = PresenterType.GLOBAL)
     BookPresenter provideRepositoryPresenter() {
         BookPresenter repositoryPresenter = new BookPresenter();
-        repositoryPresenter.setBookRepository(RepositoryProvider.getInstance(this));
+        repositoryPresenter.setBookRepository(RepositoryProvider.getInstance(new NetworkManager(this)));
         return repositoryPresenter;
     }
 

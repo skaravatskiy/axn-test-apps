@@ -1,16 +1,14 @@
 package com.rshtukaraxondevgroup.bookstest.repository;
 
-import android.content.Context;
-
 public class RepositoryProvider {
     private static BookRepository repository;
 
     private RepositoryProvider() {
     }
 
-    public static BookRepository getInstance(Context context) {
+    public static BookRepository getInstance(NetworkManager networkManager) {
         if (repository == null) {
-            repository = new BookRepository(context);
+            repository = new BookRepository(networkManager);
         }
         return repository;
     }
