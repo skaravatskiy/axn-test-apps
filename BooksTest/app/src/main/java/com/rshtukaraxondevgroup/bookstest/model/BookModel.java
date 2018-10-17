@@ -27,7 +27,7 @@ public class BookModel {
     @SerializedName("authors")
     private List<String> authors;
     @SerializedName("numberOfPages")
-    private Integer numberOfPages;
+    private int numberOfPages;
     @SerializedName("publisher")
     private String publisher;
     @SerializedName("country")
@@ -58,23 +58,27 @@ public class BookModel {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(url, name, numberOfPages);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookModel bookModel = (BookModel) o;
+        return numberOfPages == bookModel.numberOfPages &&
+                Objects.equals(url, bookModel.url) &&
+                Objects.equals(name, bookModel.name) &&
+                Objects.equals(isbn, bookModel.isbn) &&
+                Objects.equals(authors, bookModel.authors) &&
+                Objects.equals(publisher, bookModel.publisher) &&
+                Objects.equals(country, bookModel.country) &&
+                Objects.equals(mediaType, bookModel.mediaType) &&
+                Objects.equals(released, bookModel.released) &&
+                Objects.equals(characters, bookModel.characters) &&
+                Objects.equals(povCharacters, bookModel.povCharacters);
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        BookModel main = (BookModel) obj;
+    public int hashCode() {
 
-        return main.url == this.url &&
-                main.name == this.name &&
-                main.numberOfPages == this.numberOfPages;
+        return Objects.hash(url, name, isbn, authors, numberOfPages, publisher, country, mediaType, released, characters, povCharacters);
     }
 
     public String getUrl() {

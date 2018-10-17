@@ -5,7 +5,7 @@ import com.rshtukaraxondevgroup.bookstest.model.BookModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestHelper {
+public class TestHelperDB {
     public static List<BookModel> createListOfBooks(int i) {
         List<BookModel> bookModels = new ArrayList<>();
         List<String> strings = new ArrayList<>();

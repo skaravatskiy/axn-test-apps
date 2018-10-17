@@ -15,12 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHolder> {
-    private List<BookModel> bookModelList;
+    private List<BookModel> bookModelList = new ArrayList<>();
     private MainScreen mainScreen;
     private Context mContext;
 
     public BookListAdapter(final MainScreen mainScreen, Context context) {
-        bookModelList = new ArrayList<>();
         this.mContext = context;
         this.mainScreen = mainScreen;
     }
@@ -42,14 +41,8 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
             PopupMenu popupMenu = new PopupMenu(mContext, holder.itemView);
             popupMenu.inflate(R.menu.menu_del);
             popupMenu.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.delete:
-                        mainScreen.onLongClick(bookModelList.get(position));
-                        notifyDataSetChanged();
-                        break;
-                    default:
-                        break;
-                }
+                mainScreen.onLongClick(bookModelList.get(position));
+                notifyDataSetChanged();
                 return false;
             });
             popupMenu.show();

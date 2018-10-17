@@ -8,21 +8,16 @@ import com.rshtukaraxondevgroup.bookstest.database.AppDatabase;
 public class App extends Application {
     public static App instance;
 
-    private AppDatabase database;
+    private static AppDatabase DATABASE;
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "database")
-                .build();
+        DATABASE = AppDatabase.getDatabase(this);
     }
 
-    public static App getInstance() {
-        return instance;
-    }
-
-    public AppDatabase getDatabase() {
-        return database;
+    public static AppDatabase getDatabase() {
+        return DATABASE;
     }
 }

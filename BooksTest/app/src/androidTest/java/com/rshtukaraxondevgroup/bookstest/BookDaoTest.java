@@ -45,7 +45,7 @@ public class BookDaoTest {
 
     @Test
     public void whenInsertBookThenReadTheSameOne() throws Exception {
-        List<BookModel> books = TestHelper.createListOfBooks(1);
+        List<BookModel> books = TestHelperDB.createListOfBooks(1);
         bookDao.insert(books.get(0));
         bookDao.getAll()
                 .subscribeOn(Schedulers.io())
@@ -53,15 +53,15 @@ public class BookDaoTest {
                 .subscribe(list -> {
                     dbBooks = list;
                     assertEquals(1, dbBooks.size());
-                    assertTrue(TestHelper.booksAreIdentical(books.get(0), dbBooks.get(0)));
+                    assertTrue(TestHelperDB.booksAreIdentical(books.get(0), dbBooks.get(0)));
                 })
                 .dispose();
     }
 
     @Test
     public void whenInsertEmployeesThenReadThem() throws Exception {
-        List<BookModel> employees = TestHelper.createListOfBooks(5);
-        bookDao.insertAll(employees);
+        List<BookModel> listOfBooks = TestHelperDB.createListOfBooks(5);
+        bookDao.insertAll(listOfBooks);
         bookDao.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,8 +75,8 @@ public class BookDaoTest {
     @Test
     public void whenDeleteAllThenReadNothing() throws Exception {
         bookDao.deleteAll();
-        List<BookModel> employees = TestHelper.createListOfBooks(5);
-        bookDao.insertAll(employees);
+        List<BookModel> listOfBooks = TestHelperDB.createListOfBooks(5);
+        bookDao.insertAll(listOfBooks);
         bookDao.deleteAll();
         bookDao.getAll()
                 .subscribeOn(Schedulers.io())

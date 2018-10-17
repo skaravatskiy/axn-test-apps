@@ -15,11 +15,13 @@ import io.reactivex.Single;
 
 @Dao
 public interface BookDao {
+    String BOOKS_TABLE = "bookModel";
+    String BOOKS_URL = "url";
 
-    @Query("SELECT * FROM bookModel")
-    Flowable<List<BookModel>> getAll();
+    @Query("SELECT * FROM " + BOOKS_TABLE)
+    Single<List<BookModel>> getAll();
 
-    @Query("SELECT * FROM bookModel WHERE url = :url")
+    @Query("SELECT * FROM " + BOOKS_TABLE + " WHERE " + BOOKS_URL + "= :url")
     Single<BookModel> getByUrl(String url);
 
     @Insert
@@ -34,6 +36,6 @@ public interface BookDao {
     @Delete
     void delete(BookModel bookModel);
 
-    @Query("DELETE FROM bookModel")
+    @Query("DELETE FROM " + BOOKS_TABLE)
     void deleteAll();
 }

@@ -1,16 +1,11 @@
 package com.rshtukaraxondevgroup.bookstest.view;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,29 +15,19 @@ import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.PresenterType;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.rshtukaraxondevgroup.bookstest.model.BookModel;
 import com.rshtukaraxondevgroup.bookstest.R;
 import com.rshtukaraxondevgroup.bookstest.presenter.BookPresenter;
-
-import org.reactivestreams.Publisher;
+import com.rshtukaraxondevgroup.bookstest.repository.RepositoryProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.processors.PublishProcessor;
-import io.reactivex.schedulers.Schedulers;
-
 public class MainActivity extends MvpAppCompatActivity implements MainScreen, SwipeRefreshLayout.OnRefreshListener {
-    private final int VISIBLE_THRESHOLD = 1;
-    @InjectPresenter
+    @InjectPresenter(type = PresenterType.GLOBAL)
     BookPresenter bookPresenter;
 
     private RecyclerView mRecyclerView;
@@ -54,8 +39,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
     private int page = 1;
     private int lastVisibleItem, totalItemCount;
     private boolean loading = false;
-    private PublishProcessor<Integer> paginator = PublishProcessor.create();
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private ProgressBar progressBar;
 
 
@@ -72,19 +55,27 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
         mRecyclerView = findViewById(R.id.recyclerView);
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        bookListAdapter = new BookListAdapter(this, getApplicationContext());
+        bookListAdapter = new BookListAdapter(this, this);
         mRecyclerView.setAdapter(bookListAdapter);
 
         swipeRefreshLayout = findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
+        bookModelList = new ArrayList<>();
+        bookListAdapter.deleteList();
         setUpLoadMoreListener();
-        subscribeForData();
+        bookPresenter.getBooksList(page);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getMvpDelegate().onDestroyView();
     }
 
     @Override
     public void onRefresh() {
-        compositeDisposable.clear();
+        bookModelList = new ArrayList<>();
         bookListAdapter.deleteList();
         page = 1;
         if (bookModelList.isEmpty()) {
@@ -92,8 +83,15 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
         } else {
             textViewEmpty.setVisibility(View.GONE);
         }
-        subscribeForData();
+        bookPresenter.getBooksList(page);
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @ProvidePresenter(type = PresenterType.GLOBAL)
+    BookPresenter provideRepositoryPresenter() {
+        BookPresenter repositoryPresenter = new BookPresenter();
+        repositoryPresenter.setBookRepository(RepositoryProvider.getInstance(this));
+        return repositoryPresenter;
     }
 
     @Override
@@ -120,13 +118,22 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
     }
 
     @Override
-    public void showBooksList(List<BookModel> list) {
+    public void addBooksList(List<BookModel> list) {
+        bookModelList.addAll(list);
+        bookListAdapter.addItems(list);
+        loading = false;
+        progressBar.setVisibility(View.INVISIBLE);
+        if (!bookModelList.isEmpty()) {
+            textViewEmpty.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void setBookList(List<BookModel> list) {
         bookModelList = list;
         bookListAdapter.setList(list);
         if (bookModelList.isEmpty()) {
             textViewEmpty.setVisibility(View.VISIBLE);
-        } else {
-            textViewEmpty.setVisibility(View.GONE);
         }
     }
 
@@ -148,25 +155,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
         bookPresenter.deleteItem(bookModel);
     }
 
-    private Flowable<List<BookModel>> dataFromNetwork(final int page) {
-        if (isNetworkAvailable()) {
-            return bookPresenter.getBooksList(page)
-                    .toFlowable()
-                    .doOnError(this::showError)
-                    .doAfterNext(list -> bookPresenter.insertToDB(list));
-        } else {
-            bookListAdapter.deleteList();
-            Toast.makeText(getApplicationContext(), "Connection not available.", Toast.LENGTH_LONG).show();
-            return bookPresenter.getBooksListFromDB();
-        }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     private void setUpLoadMoreListener() {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -177,48 +165,14 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
                 totalItemCount = mLayoutManager.getItemCount();
                 lastVisibleItem = mLayoutManager
                         .findLastVisibleItemPosition();
-                if (!loading
-                        && totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)) {
+                if (!loading && totalItemCount <= (lastVisibleItem + 1)) {
                     page++;
-                    paginator.onNext(page);
+                    bookPresenter.getBooksList(page);
+                    progressBar.setVisibility(View.VISIBLE);
                     loading = true;
                 }
             }
         });
-    }
-
-    private void subscribeForData() {
-
-        Disposable disposable = paginator
-                .onBackpressureDrop()
-                .concatMap(new Function<Integer, Publisher<List<BookModel>>>() {
-                    @Override
-                    public Publisher<List<BookModel>> apply(@NonNull Integer page) {
-                        loading = true;
-                        progressBar.setVisibility(View.VISIBLE);
-                        return dataFromNetwork(page);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<BookModel>>() {
-                    @Override
-                    public void accept(@NonNull List<BookModel> items) {
-                        bookListAdapter.addItems(items);
-                        loading = false;
-                        bookModelList.addAll(items);
-                        if (bookModelList.isEmpty()) {
-                            textViewEmpty.setVisibility(View.VISIBLE);
-                        } else {
-                            textViewEmpty.setVisibility(View.GONE);
-                        }
-                        progressBar.setVisibility(View.INVISIBLE);
-                    }
-                });
-
-        compositeDisposable.add(disposable);
-
-        paginator.onNext(page);
-
     }
 
     public void sortByNumberOfPage() {

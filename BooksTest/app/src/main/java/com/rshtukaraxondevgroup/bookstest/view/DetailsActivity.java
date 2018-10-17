@@ -5,12 +5,16 @@ import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.PresenterType;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.rshtukaraxondevgroup.bookstest.R;
 import com.rshtukaraxondevgroup.bookstest.model.BookModel;
+import com.rshtukaraxondevgroup.bookstest.presenter.BookPresenter;
 import com.rshtukaraxondevgroup.bookstest.presenter.DetailsPresenter;
+import com.rshtukaraxondevgroup.bookstest.repository.RepositoryProvider;
 
 public class DetailsActivity extends MvpAppCompatActivity implements DetailsView {
-    @InjectPresenter
+    @InjectPresenter(type = PresenterType.GLOBAL)
     DetailsPresenter detailsPresenter;
     private TextView mTextViewUrl;
     private TextView mTextViewName;
@@ -56,5 +60,12 @@ public class DetailsActivity extends MvpAppCompatActivity implements DetailsView
         mTextViewMediaType.setText("MEDIA TYPE: " + bookModel.getMediaType());
         mTextViewReleased.setText("RELEASED: " + bookModel.getReleased());
 //        mTextViewCharacters.setText(bookModel.getCharacters().toString());
+    }
+
+    @ProvidePresenter(type = PresenterType.GLOBAL)
+    DetailsPresenter provideRepositoryPresenter() {
+        DetailsPresenter repositoryPresenter = new DetailsPresenter();
+        repositoryPresenter.setDataStoreFactory(RepositoryProvider.getInstance(this));
+        return repositoryPresenter;
     }
 }
