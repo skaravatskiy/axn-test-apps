@@ -1,5 +1,7 @@
 package com.rshtukaraxondevgroup.bookstest.presenter;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.rshtukaraxondevgroup.bookstest.model.BookModel;
@@ -11,6 +13,7 @@ import io.reactivex.schedulers.Schedulers;
 
 @InjectViewState
 public class BookPresenter extends MvpPresenter<MainScreen> {
+    private static final String TAG = BookPresenter.class.getCanonicalName();
     private BookRepository bookRepository;
 
     public BookPresenter() {
@@ -31,6 +34,6 @@ public class BookPresenter extends MvpPresenter<MainScreen> {
 
     public void deleteItem(BookModel bookModel) {
         bookRepository.deleteItem(bookModel)
-                .subscribe(list -> getViewState().setBookList(list));
+                .doOnError(throwable -> Log.d(TAG, throwable.getMessage()));
     }
 }

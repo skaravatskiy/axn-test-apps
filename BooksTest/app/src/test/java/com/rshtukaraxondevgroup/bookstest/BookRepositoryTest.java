@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.rshtukaraxondevgroup.bookstest.database.BookDao;
+import com.rshtukaraxondevgroup.bookstest.presenter.BookPresenter;
 import com.rshtukaraxondevgroup.bookstest.repository.BookApi;
 import com.rshtukaraxondevgroup.bookstest.repository.BookRepository;
 import com.rshtukaraxondevgroup.bookstest.repository.NetworkManager;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 public class BookRepositoryTest {
+    private static final String TAG = BookPresenter.class.getCanonicalName();
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     @Rule
     public final MockitoRule rule = MockitoJUnit.rule();
@@ -77,7 +79,7 @@ public class BookRepositoryTest {
                     .subscribe(bookModel -> {
                                 Assert.assertEquals(bookModel, TestHelper.createBookModel());
                             },
-                            throwable -> Log.d("getBookDetails", throwable.getMessage()))
+                            throwable -> Log.d(TAG, throwable.getMessage()))
                     .dispose();
         });
     }

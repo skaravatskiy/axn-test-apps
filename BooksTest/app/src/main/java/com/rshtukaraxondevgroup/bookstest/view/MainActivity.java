@@ -35,22 +35,17 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
     private BookListAdapter bookListAdapter;
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private List<BookModel> bookModelList = new ArrayList<>();
     private TextView textViewEmpty;
     private int page = 1;
     private int lastVisibleItem, totalItemCount;
     private boolean loading = false;
     private ProgressBar progressBar;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textViewEmpty = findViewById(R.id.empty);
-        if (bookModelList.isEmpty()) {
-            textViewEmpty.setVisibility(View.VISIBLE);
-        }
         progressBar = findViewById(R.id.progressBar);
 
         mRecyclerView = findViewById(R.id.recyclerView);
@@ -62,30 +57,18 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
         swipeRefreshLayout = findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        bookModelList = new ArrayList<>();
-        bookListAdapter.deleteList();
+        if (bookListAdapter.getItemCount() == 0) {
+            textViewEmpty.setVisibility(View.VISIBLE);
+        }
         setUpLoadMoreListener();
         bookPresenter.getBooksList(page);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        getMvpDelegate().onDestroyView();
-    }
-
-    @Override
     public void onRefresh() {
-        bookModelList = new ArrayList<>();
         bookListAdapter.deleteList();
         page = 1;
-        if (bookModelList.isEmpty()) {
-            textViewEmpty.setVisibility(View.VISIBLE);
-        } else {
-            textViewEmpty.setVisibility(View.GONE);
-        }
         bookPresenter.getBooksList(page);
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     @ProvidePresenter(type = PresenterType.GLOBAL)
@@ -106,13 +89,13 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
         int id = item.getItemId();
         switch (id) {
             case R.id.sortByNumberOfPage:
-                sortByNumberOfPage();
+                bookListAdapter.sortByNumberOfPage();
                 break;
             case R.id.sortByPublisher:
-                sortByPublisher();
+                bookListAdapter.sortByPublisher();
                 break;
             case R.id.sortByCountry:
-                sortByCountry();
+                bookListAdapter.sortByCountry();
                 break;
         }
         return false;
@@ -120,27 +103,20 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
 
     @Override
     public void addBooksList(List<BookModel> list) {
-        bookModelList.addAll(list);
         bookListAdapter.addItems(list);
         loading = false;
         progressBar.setVisibility(View.INVISIBLE);
-        if (!bookModelList.isEmpty()) {
+        if (bookListAdapter.getItemCount() > 0) {
             textViewEmpty.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void setBookList(List<BookModel> list) {
-        bookModelList = list;
-        bookListAdapter.setList(list);
-        if (bookModelList.isEmpty()) {
-            textViewEmpty.setVisibility(View.VISIBLE);
-        }
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void showError(Throwable throwable) {
         Toast.makeText(this, "Network error", Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.INVISIBLE);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -152,7 +128,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
 
     @Override
     public void onLongClick(BookModel bookModel) {
-        bookListAdapter.deleteList();
         bookPresenter.deleteItem(bookModel);
     }
 
@@ -164,8 +139,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
                 super.onScrolled(recyclerView, dx, dy);
 
                 totalItemCount = mLayoutManager.getItemCount();
-                lastVisibleItem = mLayoutManager
-                        .findLastVisibleItemPosition();
+                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
                 if (!loading && totalItemCount <= (lastVisibleItem + 1)) {
                     page++;
                     bookPresenter.getBooksList(page);
@@ -175,26 +149,4 @@ public class MainActivity extends MvpAppCompatActivity implements MainScreen, Sw
             }
         });
     }
-
-    public void sortByNumberOfPage() {
-        if (!bookModelList.isEmpty()) {
-            Collections.sort(bookModelList, BookModel.COMPARE_BY_NUMBER_OF_PAGE);
-            bookListAdapter.setList(bookModelList);
-        }
-    }
-
-    public void sortByPublisher() {
-        if (!bookModelList.isEmpty()) {
-            Collections.sort(bookModelList, BookModel.COMPARE_BY_PUBLISHER);
-            bookListAdapter.setList(bookModelList);
-        }
-    }
-
-    public void sortByCountry() {
-        if (!bookModelList.isEmpty()) {
-            Collections.sort(bookModelList, BookModel.COMPARE_BY_COUNTRY);
-            bookListAdapter.setList(bookModelList);
-        }
-    }
-
 }

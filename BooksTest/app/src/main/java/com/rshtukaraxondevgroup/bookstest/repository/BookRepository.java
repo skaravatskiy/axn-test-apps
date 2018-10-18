@@ -1,12 +1,8 @@
 package com.rshtukaraxondevgroup.bookstest.repository;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.rshtukaraxondevgroup.bookstest.App;
-import com.rshtukaraxondevgroup.bookstest.database.AppDatabase;
 import com.rshtukaraxondevgroup.bookstest.database.BookDao;
 import com.rshtukaraxondevgroup.bookstest.model.BookModel;
 
@@ -20,6 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class BookRepository {
+    private static final String TAG = BookRepository.class.getCanonicalName();
     private BookDao bookDao;
     private BookApi api;
     private NetworkManager networkManager;
@@ -40,8 +37,10 @@ public class BookRepository {
                     .doOnSuccess(list -> {
                         insertToDB(list);
                     });
+        } else if (page == 1) {
+            return getBooksListFromDB();
         } else {
-            return getBooksListFromDB(page);
+            return Single.just(new ArrayList<>());
         }
     }
 
@@ -50,27 +49,22 @@ public class BookRepository {
             for (BookModel bookModel : bookModels) {
                 bookDao.getByUrl(bookModel.getUrl())
                         .subscribe(bookModelDB -> {
-                            Log.d("getBooksList", "item No insert");
+                            Log.d(TAG, "item No insert");
                         }, throwable -> {
                             bookDao.insert(bookModel);
-                            Log.d("getBooksList", "item insert");
+                            Log.d(TAG, "item insert");
                         });
             }
         });
     }
 
-    private Single<List<BookModel>> getBooksListFromDB(int page) {
+    private Single<List<BookModel>> getBooksListFromDB() {
         return bookDao.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(list -> {
-                    if (page == 1) {
-                        return bookDao.getAll()
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread());
-                    } else  return api.getBooks(page);
-                });
-
+                .flatMap(list -> bookDao.getAll()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread()));
     }
 
     public Single<BookModel> getBookDetails(String bookUrl) {

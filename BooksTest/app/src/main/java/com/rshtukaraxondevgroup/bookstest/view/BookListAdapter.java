@@ -12,6 +12,7 @@ import com.rshtukaraxondevgroup.bookstest.model.BookModel;
 import com.rshtukaraxondevgroup.bookstest.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHolder> {
@@ -42,6 +43,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
             popupMenu.inflate(R.menu.menu_del);
             popupMenu.setOnMenuItemClickListener(item -> {
                 mainScreen.onLongClick(bookModelList.get(position));
+                bookModelList.remove(position);
                 notifyDataSetChanged();
                 return false;
             });
@@ -55,19 +57,35 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         return bookModelList.size();
     }
 
-    public void setList(List<BookModel> list) {
-        this.bookModelList = list;
-        notifyDataSetChanged();
-    }
-
     void addItems(List<BookModel> items) {
         bookModelList.addAll(items);
         notifyDataSetChanged();
     }
 
     void deleteList() {
-        bookModelList = new ArrayList<>();
+        bookModelList.clear();
         notifyDataSetChanged();
+    }
+
+    public void sortByNumberOfPage() {
+        if (!bookModelList.isEmpty()) {
+            Collections.sort(bookModelList, BookModel.COMPARE_BY_NUMBER_OF_PAGE);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void sortByPublisher() {
+        if (!bookModelList.isEmpty()) {
+            Collections.sort(bookModelList, BookModel.COMPARE_BY_PUBLISHER);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void sortByCountry() {
+        if (!bookModelList.isEmpty()) {
+            Collections.sort(bookModelList, BookModel.COMPARE_BY_COUNTRY);
+            notifyDataSetChanged();
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

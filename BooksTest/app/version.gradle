@@ -1,0 +1,15 @@
+ext {
+    supportVersion = '27.1.1'
+    supportConstraintVersion = '1.1.3'
+    retrofitVersion = '2.4.0'
+    retrofitRxjava2Version = '2.3.0'
+    rxjava2Version = '2.1.0'
+    moxyVersion = '1.5.5'
+    roomVersion = '1.1.1'
+    supportTestVersion = '1.0.2'
+    mockitoCoreVersion = '2.23.0'
+    robolectricVersion = '3.8'
+    junitVersion = '4.12'
+    mockitoAndroidVersion = '2.8.47'
+    supportTestEspressoVersion = '3.0.2'
+}

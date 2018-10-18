@@ -21,6 +21,8 @@ public class TestHelperDB {
     public static boolean booksAreIdentical(BookModel bookModel, BookModel bookModel1) {
         if (bookModel.equals(bookModel1)) {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 }

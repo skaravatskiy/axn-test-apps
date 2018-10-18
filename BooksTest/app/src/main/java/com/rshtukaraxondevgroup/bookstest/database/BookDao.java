@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.rshtukaraxondevgroup.bookstest.Constants;
 import com.rshtukaraxondevgroup.bookstest.model.BookModel;
 
 import java.util.List;
@@ -15,13 +16,10 @@ import io.reactivex.Single;
 
 @Dao
 public interface BookDao {
-    String BOOKS_TABLE = "bookModel";
-    String BOOKS_URL = "url";
-
-    @Query("SELECT * FROM " + BOOKS_TABLE)
+    @Query("SELECT * FROM " + Constants.BOOKS_TABLE)
     Single<List<BookModel>> getAll();
 
-    @Query("SELECT * FROM " + BOOKS_TABLE + " WHERE " + BOOKS_URL + "= :url")
+    @Query("SELECT * FROM " + Constants.BOOKS_TABLE + " WHERE " + Constants.BOOKS_URL + "= :url")
     Single<BookModel> getByUrl(String url);
 
     @Insert
@@ -36,6 +34,6 @@ public interface BookDao {
     @Delete
     void delete(BookModel bookModel);
 
-    @Query("DELETE FROM " + BOOKS_TABLE)
+    @Query("DELETE FROM " + Constants.BOOKS_TABLE)
     void deleteAll();
 }
