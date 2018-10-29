@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".view.UploadActivity">
+
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/liner_layout"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:id="@+id/liner_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_dropbox"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/dropbox" />
+
+        <Button
+            android:id="@+id/button_firebase"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/firebase" />
+
+        <Button
+            android:id="@+id/button_google_drive"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/google_drive" />
+    </LinearLayout>
+
+</RelativeLayout>

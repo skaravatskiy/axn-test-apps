@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "984585937079",
+    "firebase_url": "https://phototest-29e79.firebaseio.com",
+    "project_id": "phototest-29e79",
+    "storage_bucket": "phototest-29e79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984585937079:android:c5e1159c71cfe265",
+        "android_client_info": {
+          "package_name": "com.rshtukaraxondevgroup.phototest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984585937079-hnce49eudmqn9ofoa40npd5fmjeq0vki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rshtukaraxondevgroup.phototest",
+            "certificate_hash": "37abfa0401e44f1de654d7e5a8220dd9a8427c93"
+          }
+        },
+        {
+          "client_id": "984585937079-bul5gjeqrosbfvopdi21rfji9etm93ml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQkAXtlxuyQFm4NRs30L1KXLzJVS09d1A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984585937079-bul5gjeqrosbfvopdi21rfji9etm93ml.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
