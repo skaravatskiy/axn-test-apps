@@ -12,6 +12,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpTransport;
 import com.rshtukaraxondevgroup.phototest.Constants;
+import com.rshtukaraxondevgroup.phototest.exception.CreateDirectoryException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,9 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -29,7 +28,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class GoogleDriveRepository {
     private static final String TAG = GoogleDriveRepository.class.getCanonicalName();
-    private List listeners = new ArrayList();
     private Context context;
     private GoogleAccountCredential credentials;
 
@@ -42,7 +40,7 @@ public class GoogleDriveRepository {
         return credentials.newChooseAccountIntent();
     }
 
-    public void uploadFileInGoogleDrive(Uri mImageUri, String accountName) {
+    public void uploadFileInGoogleDrive(Uri mImageUri, String accountName, RepositoryListener listener) {
         if (accountName != null && mImageUri != null) {
             credentials.setSelectedAccountName(accountName);
 
@@ -52,13 +50,20 @@ public class GoogleDriveRepository {
                     .build();
 
             File filePath = new File(mImageUri.getPath());
-            FileContent mediaContent = new FileContent("image/jpeg", filePath);
+            FileContent mediaContent = new FileContent(Constants.FILE_TYPE, filePath);
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
             fileMetadata.setName(filePath.getName())
-                    .setMimeType("image/jpeg");
+                    .setMimeType(Constants.FILE_TYPE);
 
-            File downloadFile = getOutputMediaFile();
+            File downloadFile = null;
+            try {
+                downloadFile = getOutputMediaFile();
+            } catch (CreateDirectoryException e) {
+                listener.downloadError(e);
+                Log.d(TAG, e.getMessage());
+            }
 
+            File finalDownloadFile = downloadFile;
             Observable.fromCallable(() -> {
                 com.google.api.services.drive.model.File fileUpload = null;
                 try {
@@ -66,55 +71,38 @@ public class GoogleDriveRepository {
                             .setFields("id")
                             .execute();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
                 }
 
                 String fileId = fileUpload.getId();
                 try {
-                    OutputStream outputStream = new FileOutputStream(downloadFile);
+                    OutputStream outputStream = new FileOutputStream(finalDownloadFile);
                     service.files().get(fileId)
                             .executeMediaAndDownloadTo(outputStream);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
                 }
-                return downloadFile;
+                return finalDownloadFile;
             })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(result -> {
-                        RepositoryListener listener = (RepositoryListener) listeners.get(0);
-                        listener.downloadSuccessful(result);
-                    }, throwable -> {
-                        RepositoryListener listener = (RepositoryListener) listeners.get(0);
-                        listener.downloadError(throwable);
-                    });
-
+                    .subscribe(result -> listener.downloadSuccessful(result),
+                            throwable -> listener.downloadError(throwable));
         }
     }
 
-    private static File getOutputMediaFile() {
+    private static File getOutputMediaFile() throws CreateDirectoryException {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "PhotoDemo");
+                Environment.DIRECTORY_PICTURES), Constants.CHILD_FILE_DIRECTORY);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d(TAG, "failed to create directory");
-                return null;
+                throw new CreateDirectoryException(Constants.FAILED_TO_CREATE_DIRECTORY);
             }
         }
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat(Constants.FILE_CREATION_DATE_FORMAT).format(new Date());
         return new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_GDownload_" + timeStamp + ".jpg");
-    }
-
-    public interface RepositoryListener {
-        void downloadError(Throwable e);
-
-        void downloadSuccessful(File file);
-    }
-
-    public void addListener(RepositoryListener listener) {
-        listeners.add(listener);
+                Constants.FILE_NAME_GD_DOWNLOAD + timeStamp + Constants.FILE_FORMAT);
     }
 }

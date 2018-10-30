@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.rshtukaraxondevgroup.phototest.Constants;
 import com.rshtukaraxondevgroup.phototest.R;
+import com.rshtukaraxondevgroup.phototest.exception.CreateDirectoryException;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -81,23 +82,27 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mImageUri = Uri.fromFile(getOutputMediaFile());
+        try {
+            mImageUri = Uri.fromFile(getOutputMediaFile());
+        } catch (CreateDirectoryException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, e.getMessage());
+        }
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
         startActivityForResult(intent, Constants.TAKE_PICTURE);
     }
 
-    private static File getOutputMediaFile() {
+    private static File getOutputMediaFile() throws CreateDirectoryException {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "PhotoDemo");
+                Environment.DIRECTORY_PICTURES), Constants.CHILD_FILE_DIRECTORY);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d(TAG, "failed to create directory");
-                return null;
+                throw new CreateDirectoryException(Constants.FAILED_TO_CREATE_DIRECTORY);
             }
         }
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat(Constants.FILE_CREATION_DATE_FORMAT).format(new Date());
         return new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_" + timeStamp + ".jpg");
+                Constants.FILE_NAME + timeStamp + Constants.FILE_FORMAT);
     }
 
     private void clickOnEdit() {

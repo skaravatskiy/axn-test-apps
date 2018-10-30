@@ -66,10 +66,6 @@ public class UploadActivity extends AppCompatActivity implements UploadScreen {
         firebasePresenter = new FirebasePresenter(this, firebaseRepository);
         googleDrivePresenter = new GoogleDrivePresenter(this, googleDriveRepository);
 
-        dropBoxRepository.addListener(dropBoxPresenter);
-        firebaseRepository.addListener(firebasePresenter);
-        googleDriveRepository.addListener(googleDrivePresenter);
-
         mButtonDropBox.setOnClickListener(v -> {
             mProgressBar.setVisibility(View.VISIBLE);
             dropBoxPresenter.uploadDownloadFileFromDropBox(mImageUri);

@@ -47,14 +47,14 @@ public class AuthActivity extends AppCompatActivity implements AuthScreen {
         if (!validate()) {
             return;
         }
-        authPresenter.singIn(editTextEmail.getText().toString(), editTextPassword.getText().toString(), this);
+        authPresenter.singIn(editTextEmail.getText().toString(), editTextPassword.getText().toString());
     }
 
     private void registration() {
         if (!validate()) {
             return;
         }
-        authPresenter.registration(editTextEmail.getText().toString(), editTextPassword.getText().toString(), this);
+        authPresenter.registration(editTextEmail.getText().toString(), editTextPassword.getText().toString());
     }
 
     private boolean validate() {

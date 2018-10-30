@@ -2,12 +2,9 @@ package com.rshtukaraxondevgroup.phototest.repository;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.rshtukaraxondevgroup.phototest.view.AuthActivity;
 
 public class FirebaseAuthRepository {
     private FirebaseAuth mAuth;
-    private boolean auth = false;
-    private boolean registration = false;
 
     public FirebaseAuthRepository() {
         mAuth = FirebaseAuth.getInstance();
@@ -15,29 +12,26 @@ public class FirebaseAuthRepository {
 
     public boolean currentUser() {
         FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return user != null;
     }
 
-    public boolean signIn(String email, String password, AuthActivity activity) {
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(activity, task -> {
-            if (task.isSuccessful()) {
-                auth = true;
-            }
-        }).addOnFailureListener(activity, Throwable::printStackTrace);
-
-        return auth;
+    public void signIn(String email, String password, AuthRepositoryListener listener) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        listener.showSuccessAuth();
+                    }
+                })
+                .addOnFailureListener(e -> listener.showErrorAuth(e));
     }
 
-    public boolean registration(String email, String password, AuthActivity activity) {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(activity, task -> {
-            if (task.isSuccessful()) {
-                registration = true;
-            }
-        }).addOnFailureListener(activity, Throwable::printStackTrace);
-        return registration;
+    public void registration(String email, String password, AuthRepositoryListener listener) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        listener.showSuccessRegistration();
+                    }
+                })
+                .addOnFailureListener(e -> listener.showErrorRegistration(e));
     }
 }
