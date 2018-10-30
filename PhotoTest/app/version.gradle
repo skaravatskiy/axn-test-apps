@@ -9,16 +9,4 @@ ext {
     supportTestEspressoVersion = '3.0.2'
     firebase = '16.0.4'
     googleApiClient = '1.23.0'
-
-
-    retrofitRxjava2Version = '2.3.0'
-
-    moxyVersion = '1.5.5'
-    roomVersion = '1.1.1'
-    supportTestVersion = '1.0.2'
-    mockitoCoreVersion = '2.23.0'
-    robolectricVersion = '3.8'
-
-    mockitoAndroidVersion = '2.8.47'
-
 }

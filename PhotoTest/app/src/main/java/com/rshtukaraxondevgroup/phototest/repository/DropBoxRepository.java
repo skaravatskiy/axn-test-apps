@@ -1,7 +1,5 @@
 package com.rshtukaraxondevgroup.phototest.repository;
 
-import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
 import com.dropbox.core.DbxRequestConfig;
@@ -30,11 +28,13 @@ public class DropBoxRepository {
         client = new DbxClientV2(config, Constants.ACCESS_DROPBOX_TOKEN);
     }
 
-    public void uploadDownloadFile(Uri mImageUri, RepositoryListener listener) {
-        File file = new File(mImageUri.getPath());
+    public void uploadDownloadFile(String mImageUri,
+                                   File environmentFile,
+                                   RepositoryListener listener) {
+        File file = new File(mImageUri);
         File downloadFile = null;
         try {
-            downloadFile = getOutputMediaFile();
+            downloadFile = getOutputMediaFile(environmentFile);
         } catch (CreateDirectoryException e) {
             listener.downloadError(e);
             Log.d(TAG, e.getMessage());
@@ -42,13 +42,13 @@ public class DropBoxRepository {
         File finalDownloadFile = downloadFile;
         Observable.fromCallable(() -> {
             try (InputStream in = new FileInputStream(file)) {
-                client.files().uploadBuilder(mImageUri.getPath()).uploadAndFinish(in);
+                client.files().uploadBuilder(mImageUri).uploadAndFinish(in);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
 
             try (OutputStream outputStream = new FileOutputStream(finalDownloadFile)) {
-                client.files().downloadBuilder(mImageUri.getPath()).download(outputStream);
+                client.files().downloadBuilder(mImageUri).download(outputStream);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -60,9 +60,8 @@ public class DropBoxRepository {
                         throwable -> listener.downloadError(throwable));
     }
 
-    private static File getOutputMediaFile() throws CreateDirectoryException {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), Constants.CHILD_FILE_DIRECTORY);
+    private static File getOutputMediaFile(File environmentFile) throws CreateDirectoryException {
+        File mediaStorageDir = new File(environmentFile, Constants.CHILD_FILE_DIRECTORY);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
                 throw new CreateDirectoryException(Constants.FAILED_TO_CREATE_DIRECTORY);

@@ -1,9 +1,5 @@
 package com.rshtukaraxondevgroup.phototest.repository;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
 import com.google.api.services.drive.Drive;
@@ -28,74 +24,64 @@ import io.reactivex.schedulers.Schedulers;
 
 public class GoogleDriveRepository {
     private static final String TAG = GoogleDriveRepository.class.getCanonicalName();
-    private Context context;
-    private GoogleAccountCredential credentials;
 
-    public GoogleDriveRepository(Context context) {
-        this.context = context;
+    public GoogleDriveRepository() {
     }
 
-    public Intent buildGoogleAccountCredential() {
-        credentials = GoogleAccountCredential.usingOAuth2(context, Constants.SCOPES);
-        return credentials.newChooseAccountIntent();
-    }
+    public void uploadFileInGoogleDrive(String mImageUri,
+                                        GoogleAccountCredential credentials,
+                                        File environmentFile,
+                                        RepositoryListener listener) {
+        HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+        Drive service = new Drive.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, credentials)
+                .setApplicationName(Constants.APPLICATION_NAME)
+                .build();
 
-    public void uploadFileInGoogleDrive(Uri mImageUri, String accountName, RepositoryListener listener) {
-        if (accountName != null && mImageUri != null) {
-            credentials.setSelectedAccountName(accountName);
+        File filePath = new File(mImageUri);
+        FileContent mediaContent = new FileContent(Constants.FILE_TYPE, filePath);
+        com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
+        fileMetadata.setName(filePath.getName())
+                .setMimeType(Constants.FILE_TYPE);
 
-            HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-            Drive service = new Drive.Builder(HTTP_TRANSPORT, Constants.JSON_FACTORY, credentials)
-                    .setApplicationName(Constants.APPLICATION_NAME)
-                    .build();
+        File downloadFile = null;
+        try {
+            downloadFile = getOutputMediaFile(environmentFile);
+        } catch (CreateDirectoryException e) {
+            listener.downloadError(e);
+            Log.d(TAG, e.getMessage());
+        }
 
-            File filePath = new File(mImageUri.getPath());
-            FileContent mediaContent = new FileContent(Constants.FILE_TYPE, filePath);
-            com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
-            fileMetadata.setName(filePath.getName())
-                    .setMimeType(Constants.FILE_TYPE);
-
-            File downloadFile = null;
+        File finalDownloadFile = downloadFile;
+        Observable.fromCallable(() -> {
+            com.google.api.services.drive.model.File fileUpload = null;
             try {
-                downloadFile = getOutputMediaFile();
-            } catch (CreateDirectoryException e) {
-                listener.downloadError(e);
-                Log.d(TAG, e.getMessage());
+                fileUpload = service.files().create(fileMetadata, mediaContent)
+                        .setFields("id")
+                        .execute();
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage());
             }
 
-            File finalDownloadFile = downloadFile;
-            Observable.fromCallable(() -> {
-                com.google.api.services.drive.model.File fileUpload = null;
-                try {
-                    fileUpload = service.files().create(fileMetadata, mediaContent)
-                            .setFields("id")
-                            .execute();
-                } catch (IOException e) {
-                    Log.e(TAG, e.getMessage());
-                }
-
-                String fileId = fileUpload.getId();
-                try {
-                    OutputStream outputStream = new FileOutputStream(finalDownloadFile);
-                    service.files().get(fileId)
-                            .executeMediaAndDownloadTo(outputStream);
-                } catch (FileNotFoundException e) {
-                    Log.e(TAG, e.getMessage());
-                } catch (IOException e) {
-                    Log.e(TAG, e.getMessage());
-                }
-                return finalDownloadFile;
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(result -> listener.downloadSuccessful(result),
-                            throwable -> listener.downloadError(throwable));
-        }
+            String fileId = fileUpload.getId();
+            try {
+                OutputStream outputStream = new FileOutputStream(finalDownloadFile);
+                service.files().get(fileId)
+                        .executeMediaAndDownloadTo(outputStream);
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage());
+            }
+            return finalDownloadFile;
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> listener.downloadSuccessful(result),
+                        throwable -> listener.downloadError(throwable));
     }
 
-    private static File getOutputMediaFile() throws CreateDirectoryException {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), Constants.CHILD_FILE_DIRECTORY);
+    private static File getOutputMediaFile(File environmentFile) throws CreateDirectoryException {
+        File mediaStorageDir = new File(environmentFile, Constants.CHILD_FILE_DIRECTORY);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
                 throw new CreateDirectoryException(Constants.FAILED_TO_CREATE_DIRECTORY);

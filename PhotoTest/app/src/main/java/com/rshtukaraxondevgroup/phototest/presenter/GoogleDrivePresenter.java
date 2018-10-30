@@ -1,9 +1,8 @@
 package com.rshtukaraxondevgroup.phototest.presenter;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.rshtukaraxondevgroup.phototest.repository.GoogleDriveRepository;
 import com.rshtukaraxondevgroup.phototest.repository.RepositoryListener;
 import com.rshtukaraxondevgroup.phototest.view.UploadScreen;
@@ -20,12 +19,8 @@ public class GoogleDrivePresenter implements RepositoryListener {
         this.googleDriveRepository = googleDriveRepository;
     }
 
-    public Intent signIn() {
-        return googleDriveRepository.buildGoogleAccountCredential();
-    }
-
-    public void uploadDownloadFileToGoogleDrive(Uri mImageUri, String accountName) {
-        googleDriveRepository.uploadFileInGoogleDrive(mImageUri, accountName, this);
+    public void uploadDownloadFileToGoogleDrive(String mImageUri, GoogleAccountCredential credentials, File environmentFile) {
+        googleDriveRepository.uploadFileInGoogleDrive(mImageUri, credentials, environmentFile, this);
     }
 
     @Override

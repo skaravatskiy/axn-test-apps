@@ -1,7 +1,5 @@
 package com.rshtukaraxondevgroup.phototest.repository;
 
-import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
 import com.google.firebase.storage.FirebaseStorage;
@@ -9,13 +7,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.rshtukaraxondevgroup.phototest.Constants;
 import com.rshtukaraxondevgroup.phototest.exception.CreateDirectoryException;
-import com.rshtukaraxondevgroup.phototest.view.MainActivity;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -27,28 +23,30 @@ public class FirebaseRepository {
         mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
-    public void uploadFileInFirebaseStorage(Uri mImageUri, RepositoryListener listener) {
-        UploadTask uploadTask = mStorageRef.child(Objects.requireNonNull(mImageUri.getPath())).putFile(mImageUri);
-        uploadTask.addOnSuccessListener(taskSnapshot -> downloadFile(mImageUri, listener));
+    public void uploadFileInFirebaseStorage(String mImageUri,
+                                            InputStream inputStream,
+                                            File environmentFile,
+                                            RepositoryListener listener) {
+        UploadTask uploadTask = mStorageRef.child(Objects.requireNonNull(mImageUri)).putStream(inputStream);
+        uploadTask.addOnSuccessListener(taskSnapshot -> downloadFile(mImageUri, environmentFile, listener));
     }
 
-    private void downloadFile(Uri mImageUri, RepositoryListener listener) {
+    private void downloadFile(String mImageUri, File environmentFile, RepositoryListener listener) {
         File localFile = null;
         try {
-            localFile = getOutputMediaFile();
+            localFile = getOutputMediaFile(environmentFile);
         } catch (CreateDirectoryException e) {
             listener.downloadError(e);
             Log.e(TAG, e.getMessage());
         }
         File finalLocalFile = localFile;
-        mStorageRef.child(Objects.requireNonNull(mImageUri.getPath())).getFile(localFile)
+        mStorageRef.child(mImageUri).getFile(localFile)
                 .addOnSuccessListener(taskSnapshot -> listener.downloadSuccessful(finalLocalFile))
                 .addOnFailureListener(listener::downloadError);
     }
 
-    private static File getOutputMediaFile() throws CreateDirectoryException {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), Constants.CHILD_FILE_DIRECTORY);
+    private static File getOutputMediaFile(File environmentFile) throws CreateDirectoryException {
+        File mediaStorageDir = new File(environmentFile, Constants.CHILD_FILE_DIRECTORY);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
                 throw new CreateDirectoryException(Constants.FAILED_TO_CREATE_DIRECTORY);

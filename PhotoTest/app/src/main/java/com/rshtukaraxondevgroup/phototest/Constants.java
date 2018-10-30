@@ -15,7 +15,7 @@ public class Constants {
     public static final String FILE_NAME = "IMG_";
     public static final String FILE_NAME_DB_DOWNLOAD = "IMG_DB_Download_";
     public static final String FILE_NAME_GD_DOWNLOAD = "IMG_GD_Download_";
-    public static final String FILE_NAME_FB_DOWNLOAD = "IMG_GD_Download_";
+    public static final String FILE_NAME_FB_DOWNLOAD = "IMG_FD_Download_";
     public static final String FILE_TYPE = "image/jpeg";
     public static final String FILE_FORMAT = ".jpg";
     public static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
@@ -25,6 +25,7 @@ public class Constants {
     public static final int REQUEST_SIGN_IN_GOOGLE_DRIVE = 200;
     public static final int TAKE_PICTURE = 1;
     public static final List<String> SCOPES;
+
     static {
         SCOPES = new ArrayList<>();
         SCOPES.add("https://www.googleapis.com/auth/drive");

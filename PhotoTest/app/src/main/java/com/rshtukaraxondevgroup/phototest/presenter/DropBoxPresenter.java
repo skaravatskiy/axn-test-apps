@@ -1,6 +1,5 @@
 package com.rshtukaraxondevgroup.phototest.presenter;
 
-import android.net.Uri;
 import android.util.Log;
 
 import com.rshtukaraxondevgroup.phototest.repository.DropBoxRepository;
@@ -19,8 +18,8 @@ public class DropBoxPresenter implements RepositoryListener {
         this.dropBoxRepository = dropBoxRepository;
     }
 
-    public void uploadDownloadFileFromDropBox(Uri mImageUri) {
-        dropBoxRepository.uploadDownloadFile(mImageUri, this);
+    public void uploadDownloadFileFromDropBox(String mImageUri, File environmentFile) {
+        dropBoxRepository.uploadDownloadFile(mImageUri, environmentFile, this);
     }
 
     @Override

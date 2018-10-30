@@ -1,6 +1,5 @@
 package com.rshtukaraxondevgroup.phototest.presenter;
 
-import android.net.Uri;
 import android.util.Log;
 
 import com.rshtukaraxondevgroup.phototest.repository.FirebaseRepository;
@@ -8,6 +7,7 @@ import com.rshtukaraxondevgroup.phototest.repository.RepositoryListener;
 import com.rshtukaraxondevgroup.phototest.view.UploadScreen;
 
 import java.io.File;
+import java.io.InputStream;
 
 public class FirebasePresenter implements RepositoryListener {
     private static final String TAG = FirebasePresenter.class.getCanonicalName();
@@ -19,8 +19,8 @@ public class FirebasePresenter implements RepositoryListener {
         this.firebaseRepository = firebaseRepository;
     }
 
-    public void uploadDownloadFileFromFirebase(Uri mImageUri) {
-        firebaseRepository.uploadFileInFirebaseStorage(mImageUri, this);
+    public void uploadDownloadFileFromFirebase(String mImageUri, InputStream stream, File environmentFile) {
+        firebaseRepository.uploadFileInFirebaseStorage(mImageUri, stream, environmentFile, this);
     }
 
     @Override

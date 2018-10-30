@@ -2,10 +2,10 @@ package com.rshtukaraxondevgroup.phototest.view;
 
 import android.accounts.AccountManager;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,8 +16,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.OpenFileActivityOptions;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.rshtukaraxondevgroup.phototest.Constants;
 import com.rshtukaraxondevgroup.phototest.R;
 import com.rshtukaraxondevgroup.phototest.presenter.DropBoxPresenter;
@@ -28,6 +27,8 @@ import com.rshtukaraxondevgroup.phototest.repository.FirebaseRepository;
 import com.rshtukaraxondevgroup.phototest.repository.GoogleDriveRepository;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Objects;
 
 
@@ -38,6 +39,8 @@ public class UploadActivity extends AppCompatActivity implements UploadScreen {
     private FirebasePresenter firebasePresenter;
     private GoogleDrivePresenter googleDrivePresenter;
     private Uri mImageUri;
+    private GoogleAccountCredential credentials;
+    private File environmentFile;
 
     private ImageView mImageView;
     private ProgressBar mProgressBar;
@@ -60,15 +63,17 @@ public class UploadActivity extends AppCompatActivity implements UploadScreen {
 
         FirebaseRepository firebaseRepository = new FirebaseRepository();
         DropBoxRepository dropBoxRepository = new DropBoxRepository();
-        GoogleDriveRepository googleDriveRepository = new GoogleDriveRepository(this);
+        GoogleDriveRepository googleDriveRepository = new GoogleDriveRepository();
 
         dropBoxPresenter = new DropBoxPresenter(this, dropBoxRepository);
         firebasePresenter = new FirebasePresenter(this, firebaseRepository);
         googleDrivePresenter = new GoogleDrivePresenter(this, googleDriveRepository);
 
+        environmentFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
         mButtonDropBox.setOnClickListener(v -> {
             mProgressBar.setVisibility(View.VISIBLE);
-            dropBoxPresenter.uploadDownloadFileFromDropBox(mImageUri);
+            dropBoxPresenter.uploadDownloadFileFromDropBox(mImageUri.getPath(), environmentFile);
         });
         mButtonFirebase.setOnClickListener(v -> {
             Intent intent = new Intent(UploadActivity.this, AuthActivity.class);
@@ -76,7 +81,8 @@ public class UploadActivity extends AppCompatActivity implements UploadScreen {
         });
         mButtonGoogleDrive.setOnClickListener(v -> {
             mProgressBar.setVisibility(View.VISIBLE);
-            startActivityForResult(googleDrivePresenter.signIn(), Constants.REQUEST_SIGN_IN_GOOGLE_DRIVE);
+            credentials = GoogleAccountCredential.usingOAuth2(this, Constants.SCOPES);
+            startActivityForResult(credentials.newChooseAccountIntent(), Constants.REQUEST_SIGN_IN_GOOGLE_DRIVE);
         });
     }
 
@@ -87,14 +93,20 @@ public class UploadActivity extends AppCompatActivity implements UploadScreen {
                 Log.i(TAG, "Sign in Firebase request code");
                 if (resultCode == RESULT_OK) {
                     mProgressBar.setVisibility(View.VISIBLE);
-                    firebasePresenter.uploadDownloadFileFromFirebase(mImageUri);
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = getContentResolver().openInputStream(mImageUri);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    firebasePresenter.uploadDownloadFileFromFirebase(mImageUri.getPath(), inputStream, environmentFile);
                 }
                 break;
             case Constants.REQUEST_SIGN_IN_GOOGLE_DRIVE:
                 Log.i(TAG, "Sign in Google Drive request code");
                 if (resultCode == RESULT_OK) {
-                    String accountName = data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
-                    googleDrivePresenter.uploadDownloadFileToGoogleDrive(mImageUri, accountName);
+                    credentials.setSelectedAccountName(data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME));
+                    googleDrivePresenter.uploadDownloadFileToGoogleDrive(mImageUri.getPath(), credentials, environmentFile);
                 }
                 break;
         }
@@ -113,6 +125,4 @@ public class UploadActivity extends AppCompatActivity implements UploadScreen {
     public void showError(Throwable throwable) {
         Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
     }
-
-
 }
