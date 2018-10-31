@@ -16,8 +16,8 @@ public class FirebaseAuthPresenter implements AuthRepositoryListener {
         this.authScreen = authScreen;
     }
 
-    public boolean getCurrentUser() {
-        return firebaseAuthRepository.currentUser();
+    public boolean isCurrentUserExist() {
+        return firebaseAuthRepository.isCurrentUserExist();
     }
 
     public void singIn(String email, String password) {

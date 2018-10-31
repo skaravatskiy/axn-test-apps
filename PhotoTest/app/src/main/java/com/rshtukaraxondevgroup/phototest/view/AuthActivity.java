@@ -36,7 +36,7 @@ public class AuthActivity extends AppCompatActivity implements AuthScreen {
         findViewById(R.id.btn_sign_in).setOnClickListener(v -> signIn());
         findViewById(R.id.btn_registration).setOnClickListener(v -> registration());
 
-        if (authPresenter.getCurrentUser()) {
+        if (authPresenter.isCurrentUserExist()) {
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_OK, returnIntent);
             finish();

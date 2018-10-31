@@ -10,9 +10,8 @@ public class FirebaseAuthRepository {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    public boolean currentUser() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        return user != null;
+    public boolean isCurrentUserExist() {
+        return mAuth.getCurrentUser() != null;
     }
 
     public void signIn(String email, String password, AuthRepositoryListener listener) {

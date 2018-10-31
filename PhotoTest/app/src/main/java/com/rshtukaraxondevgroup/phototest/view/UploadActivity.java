@@ -97,7 +97,7 @@ public class UploadActivity extends AppCompatActivity implements UploadScreen {
                     try {
                         inputStream = getContentResolver().openInputStream(mImageUri);
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
                     }
                     firebasePresenter.uploadDownloadFileFromFirebase(mImageUri.getPath(), inputStream, environmentFile);
                 }

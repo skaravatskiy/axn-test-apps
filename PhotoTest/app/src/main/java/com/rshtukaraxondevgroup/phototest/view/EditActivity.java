@@ -5,12 +5,14 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.rshtukaraxondevgroup.phototest.Constants;
+import com.rshtukaraxondevgroup.phototest.repository.DropBoxRepository;
 import com.rshtukaraxondevgroup.phototest.view.CustomView.DrawView;
 import com.rshtukaraxondevgroup.phototest.R;
 
@@ -18,6 +20,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class EditActivity extends AppCompatActivity {
+    private static final String TAG = DropBoxRepository.class.getCanonicalName();
+
     private Uri mImageUri;
     private ImageView mImageView;
     private Button mButtonSave;
@@ -38,7 +42,7 @@ public class EditActivity extends AppCompatActivity {
         try {
             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageUri);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
 
         drawView = new DrawView(this, bitmap);

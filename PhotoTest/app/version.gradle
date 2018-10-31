@@ -9,4 +9,5 @@ ext {
     supportTestEspressoVersion = '3.0.2'
     firebase = '16.0.4'
     googleApiClient = '1.23.0'
+    espresso = '2.2.2'
 }

@@ -11,7 +11,7 @@ public class ColorBallModel {
     Context mContext;
     Point point;
     int id;
-    static int count = 0;
+    int count = 0;
 
     public ColorBallModel(Context context, int resourceId, Point point) {
         this.id = count++;
