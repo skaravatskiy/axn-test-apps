@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PhotoTest</string>
+    <string name="dropbox">DropBox</string>
+    <string name="firebase">Firebase</string>
+    <string name="google_drive">Google Drive</string>
+    <string name="edit">Edit</string>
+    <string name="upload">Upload</string>
+    <string name="save">Save</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="required">Required</string>
+</resources>
