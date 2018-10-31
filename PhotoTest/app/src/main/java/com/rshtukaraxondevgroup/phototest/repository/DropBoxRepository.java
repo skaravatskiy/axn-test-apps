@@ -5,6 +5,7 @@ import android.util.Log;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.rshtukaraxondevgroup.phototest.Constants;
+import com.rshtukaraxondevgroup.phototest.Utils;
 import com.rshtukaraxondevgroup.phototest.exception.CreateDirectoryException;
 
 import java.io.File;
@@ -12,8 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -21,20 +20,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class DropBoxRepository {
     private static final String TAG = DropBoxRepository.class.getCanonicalName();
-    private DbxClientV2 client;
+    private DbxClientV2 mClient;
 
     public DropBoxRepository() {
         DbxRequestConfig config = DbxRequestConfig.newBuilder(Constants.CLIENT_IDENTIFIER).build();
-        client = new DbxClientV2(config, Constants.ACCESS_DROPBOX_TOKEN);
+        mClient = new DbxClientV2(config, Constants.ACCESS_DROPBOX_TOKEN);
     }
 
-    public void uploadDownloadFile(String mImageUri,
-                                   File environmentFile,
+    public void uploadDownloadFile(String imageUri,
                                    RepositoryListener listener) {
-        File file = new File(mImageUri);
+        File file = new File(imageUri);
         File downloadFile = null;
         try {
-            downloadFile = getOutputMediaFile(environmentFile);
+            downloadFile = Utils.getOutputMediaFile(Constants.FILE_NAME_DB_DOWNLOAD);
         } catch (CreateDirectoryException e) {
             listener.downloadError(e);
             Log.d(TAG, e.getMessage());
@@ -42,13 +40,13 @@ public class DropBoxRepository {
         File finalDownloadFile = downloadFile;
         Observable.fromCallable(() -> {
             try (InputStream in = new FileInputStream(file)) {
-                client.files().uploadBuilder(mImageUri).uploadAndFinish(in);
+                mClient.files().uploadBuilder(imageUri).uploadAndFinish(in);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
 
             try (OutputStream outputStream = new FileOutputStream(finalDownloadFile)) {
-                client.files().downloadBuilder(mImageUri).download(outputStream);
+                mClient.files().downloadBuilder(imageUri).download(outputStream);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -58,17 +56,5 @@ public class DropBoxRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> listener.downloadSuccessful(result),
                         throwable -> listener.downloadError(throwable));
-    }
-
-    private static File getOutputMediaFile(File environmentFile) throws CreateDirectoryException {
-        File mediaStorageDir = new File(environmentFile, Constants.CHILD_FILE_DIRECTORY);
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                throw new CreateDirectoryException(Constants.FAILED_TO_CREATE_DIRECTORY);
-            }
-        }
-        String timeStamp = new SimpleDateFormat(Constants.FILE_CREATION_DATE_FORMAT).format(new Date());
-        return new File(mediaStorageDir.getPath() + File.separator +
-                Constants.FILE_NAME_DB_DOWNLOAD + timeStamp + Constants.FILE_FORMAT);
     }
 }

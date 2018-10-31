@@ -25,8 +25,8 @@ public class EditActivity extends AppCompatActivity {
     private Uri mImageUri;
     private ImageView mImageView;
     private Button mButtonSave;
-    private DrawView drawView;
-    private RelativeLayout relativeLayout;
+    private DrawView mDrawView;
+    private RelativeLayout mRelativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +45,18 @@ public class EditActivity extends AppCompatActivity {
             Log.e(TAG, e.getMessage());
         }
 
-        drawView = new DrawView(this, bitmap);
-        relativeLayout = findViewById(R.id.view);
-        relativeLayout.addView(drawView);
+        mDrawView = new DrawView(this, bitmap);
+        mRelativeLayout = findViewById(R.id.view);
+        mRelativeLayout.addView(mDrawView);
 
         mButtonSave.setOnClickListener(v -> {
-            save(drawView.save());
+            save(mDrawView.save());
         });
     }
 
     private void save(Bitmap bitmap) {
         mImageView.setImageBitmap(bitmap);
-        relativeLayout.setVisibility(View.GONE);
+        mRelativeLayout.setVisibility(View.GONE);
         mButtonSave.setVisibility(View.GONE);
     }
 }

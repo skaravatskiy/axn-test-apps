@@ -16,29 +16,29 @@ import com.rshtukaraxondevgroup.phototest.R;
 
 public class DrawView extends View {
     private Point[] points = new Point[4];
-    private int groupId = -1;
-    private ArrayList<ColorBallModel> balls = new ArrayList<ColorBallModel>();
-    private int balID = 0;
-    private Paint paint;
-    private Bitmap image;
+    private int mGroupId = -1;
+    private ArrayList<ColorBallModel> mBalls = new ArrayList<ColorBallModel>();
+    private int mBallID = 0;
+    private Paint mPaint;
+    private Bitmap mImage;
 
     public DrawView(Context context, Bitmap image) {
         super(context);
-        this.image = image;
-        paint = new Paint();
+        this.mImage = image;
+        mPaint = new Paint();
         setFocusable(true);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (image.getWidth() > image.getHeight()) {
-            double f = getWidth() / (double) image.getWidth();
-            image = Bitmap.createScaledBitmap(image, getWidth(), (int) (image.getHeight() * f), false);
+        if (mImage.getWidth() > mImage.getHeight()) {
+            double f = getWidth() / (double) mImage.getWidth();
+            mImage = Bitmap.createScaledBitmap(mImage, getWidth(), (int) (mImage.getHeight() * f), false);
         } else {
-            double f = getHeight() / (double) image.getHeight();
-            image = Bitmap.createScaledBitmap(image, getWidth(), (int) (image.getHeight() * f), false);
+            double f = getHeight() / (double) mImage.getHeight();
+            mImage = Bitmap.createScaledBitmap(mImage, getWidth(), (int) (mImage.getHeight() * f), false);
         }
-        canvas.drawBitmap(image, 0, 0, null);
+        canvas.drawBitmap(mImage, 0, 0, null);
 
         if (points[3] == null) //point4 null when user did not touch and move on screen.
             return;
@@ -56,24 +56,24 @@ public class DrawView extends View {
         }
 
         //draw stroke
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorStroke));
-        paint.setStrokeWidth(2);
-        canvas.drawRect(left, top, right, bottom, paint);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorStroke));
+        mPaint.setStrokeWidth(2);
+        canvas.drawRect(left, top, right, bottom, mPaint);
 
         //fill the rectangle
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorRectangle));
-        paint.setStrokeWidth(0);
-        canvas.drawRect(left, top, right, bottom, paint);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorRectangle));
+        mPaint.setStrokeWidth(0);
+        canvas.drawRect(left, top, right, bottom, mPaint);
 
-        // draw the balls on the canvas
-        for (int i = 0; i < balls.size(); i++) {
-            ColorBallModel ball = balls.get(i);
+        // draw the mBalls on the canvas
+        for (int i = 0; i < mBalls.size(); i++) {
+            ColorBallModel ball = mBalls.get(i);
             canvas.drawBitmap(ball.getBitmap(),
-                    ball.getX() - balls.get(0).getWidthOfBall() / 2,
-                    ball.getY() - balls.get(0).getWidthOfBall() / 2,
-                    paint);
+                    ball.getX() - mBalls.get(0).getWidthOfBall() / 2,
+                    ball.getY() - mBalls.get(0).getWidthOfBall() / 2,
+                    mPaint);
         }
     }
 
@@ -104,18 +104,18 @@ public class DrawView extends View {
                     points[3].x = X + 30;
                     points[3].y = Y;
 
-                    balID = 2;
-                    groupId = 1;
+                    mBallID = 2;
+                    mGroupId = 1;
                     // declare each ball with the ColorBallModel class
                     for (Point pt : points) {
-                        balls.add(new ColorBallModel(getContext(), R.drawable.gray_circle, pt));
+                        mBalls.add(new ColorBallModel(getContext(), R.drawable.gray_circle, pt));
                     }
                 } else {
                     //resize rectangle
-                    balID = -1;
-                    groupId = -1;
-                    for (int i = balls.size() - 1; i >= 0; i--) {
-                        ColorBallModel ball = balls.get(i);
+                    mBallID = -1;
+                    mGroupId = -1;
+                    for (int i = mBalls.size() - 1; i >= 0; i--) {
+                        ColorBallModel ball = mBalls.get(i);
                         // check if inside the bounds of the ball (circle)
                         // get the center for the ball
                         int centerX = ball.getX();
@@ -128,11 +128,11 @@ public class DrawView extends View {
 
                         if (radCircle < ball.getWidthOfBall()) {
 
-                            balID = ball.getID();
-                            if (balID == 1 || balID == 3) {
-                                groupId = 2;
+                            mBallID = ball.getID();
+                            if (mBallID == 1 || mBallID == 3) {
+                                mGroupId = 2;
                             } else {
-                                groupId = 1;
+                                mGroupId = 1;
                             }
                             invalidate();
                             break;
@@ -143,21 +143,21 @@ public class DrawView extends View {
                 break;
 
             case MotionEvent.ACTION_MOVE: // touch drag with the ball
-                if (balID > -1) {
-                    // move the balls the same as the finger
-                    balls.get(balID).setX(X);
-                    balls.get(balID).setY(Y);
+                if (mBallID > -1) {
+                    // move the mBalls the same as the finger
+                    mBalls.get(mBallID).setX(X);
+                    mBalls.get(mBallID).setY(Y);
 
-                    if (groupId == 1) {
-                        balls.get(1).setX(balls.get(0).getX());
-                        balls.get(1).setY(balls.get(2).getY());
-                        balls.get(3).setX(balls.get(2).getX());
-                        balls.get(3).setY(balls.get(0).getY());
+                    if (mGroupId == 1) {
+                        mBalls.get(1).setX(mBalls.get(0).getX());
+                        mBalls.get(1).setY(mBalls.get(2).getY());
+                        mBalls.get(3).setX(mBalls.get(2).getX());
+                        mBalls.get(3).setY(mBalls.get(0).getY());
                     } else {
-                        balls.get(0).setX(balls.get(1).getX());
-                        balls.get(0).setY(balls.get(3).getY());
-                        balls.get(2).setX(balls.get(3).getX());
-                        balls.get(2).setY(balls.get(1).getY());
+                        mBalls.get(0).setX(mBalls.get(1).getX());
+                        mBalls.get(0).setY(mBalls.get(3).getY());
+                        mBalls.get(2).setX(mBalls.get(3).getX());
+                        mBalls.get(2).setY(mBalls.get(1).getY());
                     }
                     invalidate();
                 }
@@ -188,19 +188,19 @@ public class DrawView extends View {
             if (top < 0) {
                 top = 0;
             }
-            if (right > image.getWidth()) {
-                right = image.getWidth();
+            if (right > mImage.getWidth()) {
+                right = mImage.getWidth();
             }
-            if (bottom > image.getHeight()) {
-                bottom = image.getHeight();
+            if (bottom > mImage.getHeight()) {
+                bottom = mImage.getHeight();
             }
 
             int height = bottom - top;
             int width = right - left;
-            return Bitmap.createBitmap(image, left, top, width, height);
+            return Bitmap.createBitmap(mImage, left, top, width, height);
 
         } else {
-            return image;
+            return mImage;
         }
     }
 }

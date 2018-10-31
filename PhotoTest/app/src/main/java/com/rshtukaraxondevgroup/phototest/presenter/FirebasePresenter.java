@@ -11,27 +11,30 @@ import java.io.InputStream;
 
 public class FirebasePresenter implements RepositoryListener {
     private static final String TAG = FirebasePresenter.class.getCanonicalName();
-    private UploadScreen uploadScreen;
-    private FirebaseRepository firebaseRepository;
+    private UploadScreen mUploadScreen;
+    private FirebaseRepository mFirebaseRepository;
 
     public FirebasePresenter(UploadScreen uploadScreen, FirebaseRepository firebaseRepository) {
-        this.uploadScreen = uploadScreen;
-        this.firebaseRepository = firebaseRepository;
-    }
-
-    public void uploadDownloadFileFromFirebase(String mImageUri, InputStream stream, File environmentFile) {
-        firebaseRepository.uploadFileInFirebaseStorage(mImageUri, stream, environmentFile, this);
+        this.mUploadScreen = uploadScreen;
+        this.mFirebaseRepository = firebaseRepository;
     }
 
     @Override
     public void downloadError(Throwable e) {
-        uploadScreen.showError(e);
+        mUploadScreen.hideProgressBar();
+        mUploadScreen.showError(e);
         Log.e(TAG, e.getMessage());
     }
 
     @Override
     public void downloadSuccessful(File file) {
-        uploadScreen.showImage(file);
+        mUploadScreen.hideProgressBar();
+        mUploadScreen.showImage(file);
         Log.d(TAG, file.getName());
+    }
+
+    public void uploadDownloadFileFromFirebase(String imageUri, InputStream stream) {
+        mUploadScreen.showProgressBar();
+        mFirebaseRepository.uploadFileInFirebaseStorage(imageUri, stream, this);
     }
 }

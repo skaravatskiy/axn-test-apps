@@ -10,27 +10,30 @@ import java.io.File;
 
 public class DropBoxPresenter implements RepositoryListener {
     private static final String TAG = FirebasePresenter.class.getCanonicalName();
-    private UploadScreen uploadScreen;
-    private DropBoxRepository dropBoxRepository;
+    private UploadScreen mUploadScreen;
+    private DropBoxRepository mDropBoxRepository;
 
     public DropBoxPresenter(UploadScreen uploadScreen, DropBoxRepository dropBoxRepository) {
-        this.uploadScreen = uploadScreen;
-        this.dropBoxRepository = dropBoxRepository;
-    }
-
-    public void uploadDownloadFileFromDropBox(String mImageUri, File environmentFile) {
-        dropBoxRepository.uploadDownloadFile(mImageUri, environmentFile, this);
+        this.mUploadScreen = uploadScreen;
+        this.mDropBoxRepository = dropBoxRepository;
     }
 
     @Override
     public void downloadError(Throwable e) {
-        uploadScreen.showError(e);
+        mUploadScreen.hideProgressBar();
+        mUploadScreen.showError(e);
         Log.e(TAG, e.getMessage());
     }
 
     @Override
     public void downloadSuccessful(File file) {
-        uploadScreen.showImage(file);
+        mUploadScreen.hideProgressBar();
+        mUploadScreen.showImage(file);
         Log.d(TAG, file.getName());
+    }
+
+    public void uploadDownloadFileFromDropBox(String imageUri) {
+        mUploadScreen.showProgressBar();
+        mDropBoxRepository.uploadDownloadFile(imageUri, this);
     }
 }

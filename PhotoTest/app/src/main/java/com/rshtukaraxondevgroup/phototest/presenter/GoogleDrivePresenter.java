@@ -11,27 +11,30 @@ import java.io.File;
 
 public class GoogleDrivePresenter implements RepositoryListener {
     private static final String TAG = GoogleDrivePresenter.class.getCanonicalName();
-    private UploadScreen uploadScreen;
-    private GoogleDriveRepository googleDriveRepository;
+    private UploadScreen mUploadScreen;
+    private GoogleDriveRepository mGoogleDriveRepository;
 
     public GoogleDrivePresenter(UploadScreen uploadScreen, GoogleDriveRepository googleDriveRepository) {
-        this.uploadScreen = uploadScreen;
-        this.googleDriveRepository = googleDriveRepository;
-    }
-
-    public void uploadDownloadFileToGoogleDrive(String mImageUri, GoogleAccountCredential credentials, File environmentFile) {
-        googleDriveRepository.uploadFileInGoogleDrive(mImageUri, credentials, environmentFile, this);
+        this.mUploadScreen = uploadScreen;
+        this.mGoogleDriveRepository = googleDriveRepository;
     }
 
     @Override
     public void downloadError(Throwable e) {
-        uploadScreen.showError(e);
+        mUploadScreen.hideProgressBar();
+        mUploadScreen.showError(e);
         Log.e(TAG, e.getMessage());
     }
 
     @Override
     public void downloadSuccessful(File file) {
-        uploadScreen.showImage(file);
+        mUploadScreen.hideProgressBar();
+        mUploadScreen.showImage(file);
         Log.d(TAG, file.getName());
+    }
+
+    public void uploadDownloadFileToGoogleDrive(String imageUri, GoogleAccountCredential credentials) {
+        mUploadScreen.showProgressBar();
+        mGoogleDriveRepository.uploadFileInGoogleDrive(imageUri, credentials, this);
     }
 }

@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.rshtukaraxondevgroup.phototest.Constants;
 import com.rshtukaraxondevgroup.phototest.R;
+import com.rshtukaraxondevgroup.phototest.Utils;
 import com.rshtukaraxondevgroup.phototest.exception.CreateDirectoryException;
 
 import java.io.File;
@@ -83,26 +84,13 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
-            mImageUri = Uri.fromFile(getOutputMediaFile());
+            mImageUri = Uri.fromFile(Utils.getOutputMediaFile(Constants.FILE_NAME));
         } catch (CreateDirectoryException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             Log.e(TAG, e.getMessage());
         }
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
         startActivityForResult(intent, Constants.TAKE_PICTURE);
-    }
-
-    private static File getOutputMediaFile() throws CreateDirectoryException {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), Constants.CHILD_FILE_DIRECTORY);
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                throw new CreateDirectoryException(Constants.FAILED_TO_CREATE_DIRECTORY);
-            }
-        }
-        String timeStamp = new SimpleDateFormat(Constants.FILE_CREATION_DATE_FORMAT).format(new Date());
-        return new File(mediaStorageDir.getPath() + File.separator +
-                Constants.FILE_NAME + timeStamp + Constants.FILE_FORMAT);
     }
 
     private void clickOnEdit() {

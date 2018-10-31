@@ -6,4 +6,8 @@ public interface UploadScreen {
     void showImage(File file);
 
     void showError(Throwable throwable);
+
+    void showProgressBar();
+
+    void hideProgressBar();
 }

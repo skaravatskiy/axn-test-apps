@@ -15,63 +15,32 @@ import com.rshtukaraxondevgroup.phototest.repository.FirebaseAuthRepository;
 
 
 public class AuthActivity extends AppCompatActivity implements AuthScreen {
-    private EditText editTextEmail;
-    private EditText editTextPassword;
+    private EditText mEditTextEmail;
+    private EditText mEditTextPassword;
     private Button mButtonLogin;
     private Button mButtonRegisration;
-    private FirebaseAuthPresenter authPresenter;
+    private FirebaseAuthPresenter mAuthPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-        editTextEmail = findViewById(R.id.et_email);
-        editTextPassword = findViewById(R.id.et_password);
+        mEditTextEmail = findViewById(R.id.et_email);
+        mEditTextPassword = findViewById(R.id.et_password);
 
         FirebaseAuthRepository firebaseAuthRepository = new FirebaseAuthRepository();
-        authPresenter = new FirebaseAuthPresenter(firebaseAuthRepository, this);
+        mAuthPresenter = new FirebaseAuthPresenter(firebaseAuthRepository, this);
 
         mButtonLogin = findViewById(R.id.btn_sign_in);
         mButtonRegisration = findViewById(R.id.btn_registration);
         findViewById(R.id.btn_sign_in).setOnClickListener(v -> signIn());
         findViewById(R.id.btn_registration).setOnClickListener(v -> registration());
 
-        if (authPresenter.isCurrentUserExist()) {
+        if (mAuthPresenter.isCurrentUserExist()) {
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
         }
-    }
-
-    private void signIn() {
-        if (!validate()) {
-            return;
-        }
-        authPresenter.singIn(editTextEmail.getText().toString(), editTextPassword.getText().toString());
-    }
-
-    private void registration() {
-        if (!validate()) {
-            return;
-        }
-        authPresenter.registration(editTextEmail.getText().toString(), editTextPassword.getText().toString());
-    }
-
-    private boolean validate() {
-        boolean result = true;
-        if (TextUtils.isEmpty(editTextEmail.getText().toString().trim())) {
-            editTextEmail.setError(getString(R.string.required));
-            result = false;
-        } else {
-            editTextEmail.setError(null);
-        }
-        if (TextUtils.isEmpty(editTextPassword.getText().toString().trim())) {
-            editTextPassword.setError(getString(R.string.required));
-            result = false;
-        } else {
-            editTextPassword.setError(null);
-        }
-        return result;
     }
 
     @Override
@@ -98,5 +67,36 @@ public class AuthActivity extends AppCompatActivity implements AuthScreen {
     @Override
     public void showErrorRegistration() {
         Toast.makeText(AuthActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
+    }
+
+    private void signIn() {
+        if (!validate()) {
+            return;
+        }
+        mAuthPresenter.singIn(mEditTextEmail.getText().toString(), mEditTextPassword.getText().toString());
+    }
+
+    private void registration() {
+        if (!validate()) {
+            return;
+        }
+        mAuthPresenter.registration(mEditTextEmail.getText().toString(), mEditTextPassword.getText().toString());
+    }
+
+    private boolean validate() {
+        boolean result = true;
+        if (TextUtils.isEmpty(mEditTextEmail.getText().toString().trim())) {
+            mEditTextEmail.setError(getString(R.string.required));
+            result = false;
+        } else {
+            mEditTextEmail.setError(null);
+        }
+        if (TextUtils.isEmpty(mEditTextPassword.getText().toString().trim())) {
+            mEditTextPassword.setError(getString(R.string.required));
+            result = false;
+        } else {
+            mEditTextPassword.setError(null);
+        }
+        return result;
     }
 }
