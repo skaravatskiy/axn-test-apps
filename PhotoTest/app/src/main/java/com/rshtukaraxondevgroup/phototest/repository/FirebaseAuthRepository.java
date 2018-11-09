@@ -14,23 +14,23 @@ public class FirebaseAuthRepository {
         return mAuth.getCurrentUser() != null;
     }
 
-    public void signIn(String email, String password, AuthRepositoryListener listener) {
+    public void signIn(String email, String password, AuthRepositoryListener authRepositoryListener) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        listener.showSuccessAuth();
+                        authRepositoryListener.showSuccessAuth();
                     }
                 })
-                .addOnFailureListener(e -> listener.showErrorAuth(e));
+                .addOnFailureListener(e -> authRepositoryListener.showErrorAuth(e));
     }
 
-    public void registration(String email, String password, AuthRepositoryListener listener) {
+    public void registration(String email, String password, RegistrationRepositoryListener registrationRepositoryListener) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        listener.showSuccessRegistration();
+                        registrationRepositoryListener.showSuccessRegistration();
                     }
                 })
-                .addOnFailureListener(e -> listener.showErrorRegistration(e));
+                .addOnFailureListener(e -> registrationRepositoryListener.showErrorRegistration(e));
     }
 }
