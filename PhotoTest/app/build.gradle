@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -39,27 +39,29 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$supportConstraintVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxjava2Version"
 
-    testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test:runner:$androidxTest"
     androidTestImplementation "androidx.test:rules:$androidxTest"
-
-    androidTestImplementation "androidx.test:core:$androidxTestCore"
     androidTestImplementation "androidx.test.ext:junit:$androidxTestCore"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxTestEspresso"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$androidxTestEspresso"
-
     androidTestImplementation "com.android.support.test:runner:$supportTestVersion"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$supportTestEspressoVersion"
+
+    testImplementation "org.powermock:powermock-api-mockito2:$powermock"
+    testImplementation "org.powermock:powermock-module-junit4:$powermock"
+    testImplementation "org.powermock:powermock-core:$powermock"
+
+    testImplementation "com.android.support.test:rules:$supportTestVersion"
+    testImplementation "com.android.support.test:runner:$supportTestVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoCoreVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "org.mockito:mockito-android:$mockitoAndroidVersion"
 
     implementation "com.google.firebase:firebase-storage:$firebase"
     implementation "com.google.firebase:firebase-auth:$firebase"
     implementation "com.google.api-client:google-api-client:$googleApiClient"
     implementation "com.google.oauth-client:google-oauth-client-jetty:$googleApiClient"
     implementation "com.google.apis:google-api-services-drive:v3-rev110-$googleApiClient"
-
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:$espresso", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 
     implementation("com.google.api-client:google-api-client-android:$googleApiClient") {
         exclude group: 'org.apache.httpcomponents'

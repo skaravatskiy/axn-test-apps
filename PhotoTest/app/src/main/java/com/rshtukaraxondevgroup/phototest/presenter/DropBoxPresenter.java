@@ -33,7 +33,7 @@ public class DropBoxPresenter implements RepositoryListener {
     }
 
     public void uploadDownloadFileFromDropBox(String imageUri) {
-        mUploadScreen.showProgressBar();
         mDropBoxRepository.uploadDownloadFile(imageUri, this);
+        mUploadScreen.showProgressBar();
     }
 }

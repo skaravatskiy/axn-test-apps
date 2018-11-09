@@ -37,6 +37,7 @@ public class EditActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         mImageUri = Uri.parse(Objects.requireNonNull(extras).getString(Constants.EXTRA_URI));
+        Log.d(TAG, mImageUri.toString());
 
         Bitmap bitmap = null;
         try {
@@ -45,9 +46,11 @@ public class EditActivity extends AppCompatActivity {
             Log.e(TAG, e.getMessage());
         }
 
-        mDrawView = new DrawView(this, bitmap);
-        mRelativeLayout = findViewById(R.id.view);
-        mRelativeLayout.addView(mDrawView);
+        if (bitmap != null) {
+            mDrawView = new DrawView(this, bitmap);
+            mRelativeLayout = findViewById(R.id.view);
+            mRelativeLayout.addView(mDrawView);
+        }
 
         mButtonSave.setOnClickListener(v -> {
             save(mDrawView.save());

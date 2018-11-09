@@ -10,7 +10,11 @@ ext {
     androidxTestEspresso = '3.1.0'
     supportTestVersion = '1.0.2'
     supportTestEspressoVersion = '3.0.2'
+    mockitoAndroidVersion = '2.8.47'
+    mockitoCoreVersion = '2.4.0'
+    robolectricVersion = '3.8'
     firebase = '16.0.4'
     googleApiClient = '1.23.0'
     espresso = '2.2.2'
+    powermock = '1.7.0RC2'
 }

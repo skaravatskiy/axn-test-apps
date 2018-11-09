@@ -11,4 +11,5 @@
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
     <string name="required">Required</string>
+    <string name="take_photo">Take photo</string>
 </resources>
