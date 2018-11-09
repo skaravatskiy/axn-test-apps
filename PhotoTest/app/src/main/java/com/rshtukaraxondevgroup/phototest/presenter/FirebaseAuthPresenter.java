@@ -4,9 +4,10 @@ import android.util.Log;
 
 import com.rshtukaraxondevgroup.phototest.repository.AuthRepositoryListener;
 import com.rshtukaraxondevgroup.phototest.repository.FirebaseAuthRepository;
+import com.rshtukaraxondevgroup.phototest.repository.RegistrationRepositoryListener;
 import com.rshtukaraxondevgroup.phototest.view.AuthScreen;
 
-public class FirebaseAuthPresenter implements AuthRepositoryListener {
+public class FirebaseAuthPresenter implements AuthRepositoryListener, RegistrationRepositoryListener {
     private static final String TAG = FirebaseAuthPresenter.class.getCanonicalName();
     private FirebaseAuthRepository mFirebaseAuthRepository;
     private AuthScreen mAuthScreen;
