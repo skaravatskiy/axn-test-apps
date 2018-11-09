@@ -9,5 +9,5 @@
 /build
 /captures
 .externalNativeBuild
-/dictionaries
-.kotlinc.xml
+/.idea/dictionaries
+/.idea/kotlinc.xml
