@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MapTest</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="bank">Bank</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="school">School</string>
+    <string name="direction">Direction</string>
+</resources>
