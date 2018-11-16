@@ -7,13 +7,13 @@
     tools:context=".view.MapsActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white_background">
+        android:background="@color/white">
 
         <fragment
-            android:id="@+id/place_autocomplete"
+            android:id="@+id/fragment_place_autocomplete"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -21,7 +21,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/map"
+        android:id="@+id/fragment_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,57 +30,21 @@
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        map:layout_constraintTop_toBottomOf="@+id/app_bar_layout"
         tools:context=".view.MapsActivity" />
 
-    <LinearLayout
-        android:id="@+id/radio_group_list_selector"
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/btn_navigation_view"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/white_hint"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:itemBackground="@color/colorPrimary"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/btn_bank"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/bank" />
-
-        <View
-            android:layout_width="1dip"
-            android:layout_height="match_parent"
-            android:background="#aaa" />
-
-        <Button
-            android:id="@+id/btn_restaurant"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/restaurant" />
-
-        <View
-            android:id="@+id/VerticalLine"
-            android:layout_width="1dip"
-            android:layout_height="match_parent"
-            android:background="#aaa" />
-
-        <Button
-            android:id="@+id/btn_school"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/school" />
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_main" />
 
     <Button
         android:id="@+id/btn_direction"
@@ -90,7 +54,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="@string/direction"
-        app:layout_constraintBottom_toTopOf="@+id/radio_group_list_selector"
+        app:layout_constraintBottom_toTopOf="@+id/btn_navigation_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>

@@ -16,8 +16,8 @@ public class PlacesMapPresenter implements PlacesRepositoryListener {
     }
 
     @Override
-    public void downloadError(Throwable e) {
-        mMapsScreen.showError(e);
+    public void downloadError() {
+        mMapsScreen.showError();
     }
 
     @Override

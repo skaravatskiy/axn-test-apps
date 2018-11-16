@@ -8,6 +8,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -35,78 +36,82 @@ import com.rshtukaraxondevgroup.maptest.presenter.PlacesMapPresenter;
 import com.rshtukaraxondevgroup.maptest.repository.DirectionsMapRepository;
 import com.rshtukaraxondevgroup.maptest.repository.PlacesMapRepository;
 
+import static com.rshtukaraxondevgroup.maptest.Constants.DEFAULT_LATITUDE;
+import static com.rshtukaraxondevgroup.maptest.Constants.DEFAULT_LONGTITUDE;
 import static com.rshtukaraxondevgroup.maptest.Constants.MY_PERMISSION_ACCESS_COURSE_LOCATION;
 
 public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapReadyCallback {
     private static final String TAG = MapsActivity.class.getCanonicalName();
 
     private Button mButtonDirection;
-    private Button mButtonBank;
-    private Button mButtonRestaurant;
-    private Button mButtonSchool;
-    private DirectionsMapPresenter directionsMapPresenter;
-    private PlacesMapPresenter placesMapPresenter;
-    private Polyline polylineFinal;
+    private BottomNavigationView mBottomNavigationView;
+    private DirectionsMapPresenter mDirectionsMapPresenter;
+    private PlacesMapPresenter mPlacesMapPresenter;
+    private Polyline mPolylineFinal;
     private GoogleMap mMap;
-    private PlaceAutocompleteFragment placeAutoComplete;
-    private Marker marker;
+    private PlaceAutocompleteFragment mPlaceAutoComplete;
+    private Marker mMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mButtonDirection = findViewById(R.id.btn_direction);
-        mButtonBank = findViewById(R.id.btn_bank);
-        mButtonRestaurant = findViewById(R.id.btn_restaurant);
-        mButtonSchool = findViewById(R.id.btn_school);
+        mBottomNavigationView = findViewById(R.id.btn_navigation_view);
 
         DirectionsMapRepository directionsMapRepository = new DirectionsMapRepository();
         PlacesMapRepository placesMapRepository = new PlacesMapRepository();
-        directionsMapPresenter = new DirectionsMapPresenter(this, directionsMapRepository);
-        placesMapPresenter = new PlacesMapPresenter(this, placesMapRepository);
+        mDirectionsMapPresenter = new DirectionsMapPresenter(this, directionsMapRepository);
+        mPlacesMapPresenter = new PlacesMapPresenter(this, placesMapRepository);
 
-        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
-        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+        mPlaceAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.fragment_place_autocomplete);
+        mPlaceAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 Log.d(TAG, "Place selected: " + place.getName());
-                if (marker != null) marker.remove();
-                marker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+                if (mMarker != null) mMarker.remove();
+                mMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 13));
             }
 
             @Override
             public void onError(Status status) {
-                Log.d(TAG, "An error occurred: " + status);
+                Log.e(TAG, "An error occurred: " + status);
             }
         });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.fragment_map);
         mapFragment.getMapAsync(this);
 
         mButtonDirection.setOnClickListener(v -> onDirectionClick());
-        mButtonBank.setOnClickListener(v -> {
-            if (marker != null) {
-                placesMapPresenter.downloadMapPlaces(marker.getPosition().latitude,
-                        marker.getPosition().longitude, "bank");
-                mMap.clear();
-            }
-        });
-        mButtonRestaurant.setOnClickListener(v -> {
-            if (marker != null) {
-                placesMapPresenter.downloadMapPlaces(marker.getPosition().latitude,
-                        marker.getPosition().longitude, "restaurant");
-                mMap.clear();
-            }
-        });
-        mButtonSchool.setOnClickListener(v -> {
-            if (marker != null) {
-                placesMapPresenter.downloadMapPlaces(marker.getPosition().latitude,
-                        marker.getPosition().longitude, "school");
-                mMap.clear();
-            }
-        });
+        mBottomNavigationView.setOnNavigationItemSelectedListener(
+                item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_bank:
+                            if (mMarker != null) {
+                                mPlacesMapPresenter.downloadMapPlaces(mMarker.getPosition().latitude,
+                                        mMarker.getPosition().longitude, "bank");
+                                mMap.clear();
+                            }
+                            break;
+                        case R.id.action_restaurant:
+                            if (mMarker != null) {
+                                mPlacesMapPresenter.downloadMapPlaces(mMarker.getPosition().latitude,
+                                        mMarker.getPosition().longitude, "restaurant");
+                                mMap.clear();
+                            }
+                            break;
+                        case R.id.action_school:
+                            if (mMarker != null) {
+                                mPlacesMapPresenter.downloadMapPlaces(mMarker.getPosition().latitude,
+                                        mMarker.getPosition().longitude, "school");
+                                mMap.clear();
+                            }
+                            break;
+                    }
+                    return true;
+                });
     }
 
     @Override
@@ -115,8 +120,8 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
         mMap.getUiSettings().setMapToolbarEnabled(false);
         enableMyLocationIfPermitted();
         mMap.setOnMapClickListener(newPosition -> {
-            if (marker != null) marker.remove();
-            marker = mMap.addMarker(new MarkerOptions().position(newPosition));
+            if (mMarker != null) mMarker.remove();
+            mMarker = mMap.addMarker(new MarkerOptions().position(newPosition));
         });
     }
 
@@ -136,7 +141,7 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
 
     @Override
     public void drawingPolyline(PolylineOptions polylineOptions) {
-        polylineFinal = mMap.addPolyline(polylineOptions);
+        mPolylineFinal = mMap.addPolyline(polylineOptions);
     }
 
     @Override
@@ -146,15 +151,15 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
     }
 
     @Override
-    public void showError(Throwable e) {
+    public void showError() {
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
     }
 
     private void onDirectionClick() {
-        if (polylineFinal != null) {
-            polylineFinal.remove();
+        if (mPolylineFinal != null) {
+            mPolylineFinal.remove();
         }
-        if (marker != null) {
+        if (mMarker != null) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
 
@@ -162,8 +167,8 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
                     .getBestProvider(criteria, true));
 
             LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
-            LatLng dest = marker.getPosition();
-            directionsMapPresenter.downloadMapDirection(origin, dest);
+            LatLng dest = mMarker.getPosition();
+            mDirectionsMapPresenter.downloadMapDirection(origin, dest);
         }
     }
 
@@ -181,7 +186,7 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
     private void showDefaultLocation() {
         Toast.makeText(this, "Location permission not granted, " + "showing default location",
                 Toast.LENGTH_SHORT).show();
-        LatLng redmond = new LatLng(47.6739881, -122.121512);
+        LatLng redmond = new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGTITUDE);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(redmond));
     }
 }

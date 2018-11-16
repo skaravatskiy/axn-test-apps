@@ -3,10 +3,10 @@ package com.rshtukaraxondevgroup.maptest.presenter;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.rshtukaraxondevgroup.maptest.repository.DirectionsMapRepository;
-import com.rshtukaraxondevgroup.maptest.repository.DirectinsRepositoryListener;
+import com.rshtukaraxondevgroup.maptest.repository.DirectionsRepositoryListener;
 import com.rshtukaraxondevgroup.maptest.view.MapsScreen;
 
-public class DirectionsMapPresenter implements DirectinsRepositoryListener {
+public class DirectionsMapPresenter implements DirectionsRepositoryListener {
     private MapsScreen mMapsScreen;
     private DirectionsMapRepository mRepository;
 
@@ -16,8 +16,8 @@ public class DirectionsMapPresenter implements DirectinsRepositoryListener {
     }
 
     @Override
-    public void downloadError(Throwable e) {
-        mMapsScreen.showError(e);
+    public void downloadError() {
+        mMapsScreen.showError();
     }
 
     @Override

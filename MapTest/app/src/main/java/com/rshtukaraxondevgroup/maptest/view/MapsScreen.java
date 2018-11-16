@@ -9,5 +9,5 @@ public interface MapsScreen {
 
     void drawingPlaces(MarkerOptions markerOptions, LatLng latLng);
 
-    void showError(Throwable e);
+    void showError();
 }
