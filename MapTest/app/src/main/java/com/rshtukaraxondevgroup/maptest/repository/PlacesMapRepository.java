@@ -15,17 +15,12 @@ import static com.rshtukaraxondevgroup.maptest.Constants.PROXIMITY_RADIUS;
 public class PlacesMapRepository {
     private static final String TAG = PlacesMapRepository.class.getCanonicalName();
 
-    private MapApi mApi;
-
-    public PlacesMapRepository() {
-        MapService mapService = new MapService();
-        this.mApi = mapService.getClient().create(MapApi.class);
-    }
-
     public void download(double latitude, double longitude, String nearbyPlace, PlacesRepositoryListener listener) {
+        MapApi api = MapServiceProvider.getInstance().getClient().create(MapApi.class);
+
         String location = latitude + "," + longitude;
 
-        mApi.getPlacesResults(location, PROXIMITY_RADIUS, nearbyPlace, KEY)
+        api.getPlacesResults(location, PROXIMITY_RADIUS, nearbyPlace, KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(placesResults -> {

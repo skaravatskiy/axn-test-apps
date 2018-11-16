@@ -91,21 +91,21 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
                         case R.id.action_bank:
                             if (mMarker != null) {
                                 mPlacesMapPresenter.downloadMapPlaces(mMarker.getPosition().latitude,
-                                        mMarker.getPosition().longitude, "bank");
+                                        mMarker.getPosition().longitude, getString(R.string.bank_nearby_place));
                                 mMap.clear();
                             }
                             break;
                         case R.id.action_restaurant:
                             if (mMarker != null) {
                                 mPlacesMapPresenter.downloadMapPlaces(mMarker.getPosition().latitude,
-                                        mMarker.getPosition().longitude, "restaurant");
+                                        mMarker.getPosition().longitude, getString(R.string.restaurant_nearby_place));
                                 mMap.clear();
                             }
                             break;
                         case R.id.action_school:
                             if (mMarker != null) {
                                 mPlacesMapPresenter.downloadMapPlaces(mMarker.getPosition().latitude,
-                                        mMarker.getPosition().longitude, "school");
+                                        mMarker.getPosition().longitude, getString(R.string.school_nearby_place));
                                 mMap.clear();
                             }
                             break;
@@ -163,7 +163,8 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
 
-            @SuppressLint("MissingPermission") Location location = locationManager.getLastKnownLocation(locationManager
+            @SuppressLint("MissingPermission")
+            Location location = locationManager.getLastKnownLocation(locationManager
                     .getBestProvider(criteria, true));
 
             LatLng origin = new LatLng(location.getLatitude(), location.getLongitude());
@@ -184,7 +185,7 @@ public class MapsActivity extends FragmentActivity implements MapsScreen, OnMapR
     }
 
     private void showDefaultLocation() {
-        Toast.makeText(this, "Location permission not granted, " + "showing default location",
+        Toast.makeText(this, "Location permission not granted, showing default location",
                 Toast.LENGTH_SHORT).show();
         LatLng redmond = new LatLng(DEFAULT_LATITUDE, DEFAULT_LONGTITUDE);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(redmond));

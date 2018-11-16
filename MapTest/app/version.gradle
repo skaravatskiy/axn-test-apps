@@ -8,4 +8,5 @@ ext {
     supportTestEspressoVersion = '3.0.2'
     retrofitVersion = '2.4.0'
     retrofitRxjava2Version = '2.3.0'
+    googleMapsVersion = '0.2.4'
 }

@@ -22,18 +22,13 @@ import static com.rshtukaraxondevgroup.maptest.Utils.decodePoly;
 public class DirectionsMapRepository {
     private static final String TAG = DirectionsMapRepository.class.getCanonicalName();
 
-    private MapApi mApi;
-
-    public DirectionsMapRepository() {
-        MapService mapService = new MapService();
-        this.mApi = mapService.getClient().create(MapApi.class);
-    }
-
     public void download(LatLng originLatLng, LatLng destLatLng, DirectionsRepositoryListener listener) {
+        MapApi api = MapServiceProvider.getInstance().getClient().create(MapApi.class);
+
         String origin = originLatLng.latitude + "," + originLatLng.longitude;
         String dest = destLatLng.latitude + "," + destLatLng.longitude;
 
-        mApi.getDirectionsResults(origin, dest, DIRECTIONS_MODE, KEY)
+        api.getDirectionsResults(origin, dest, DIRECTIONS_MODE, KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(directionsResult -> {
