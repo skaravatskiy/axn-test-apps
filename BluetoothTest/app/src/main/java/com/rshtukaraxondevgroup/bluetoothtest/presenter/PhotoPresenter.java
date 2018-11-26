@@ -14,8 +14,8 @@ public class PhotoPresenter {
 
     public void getPhotosList() {
         mPhotoRepository.getPhotosList()
-                .subscribe(list -> mPhotosScreen.addBooksList(list),
-                        throwable -> mPhotosScreen.showError(throwable));
+                .subscribe(list -> mPhotosScreen.addPhotosList(list),
+                        throwable -> mPhotosScreen.showError(throwable.getMessage()));
     }
 
     public void saveReceivedPhotos(byte[] photoModels) {

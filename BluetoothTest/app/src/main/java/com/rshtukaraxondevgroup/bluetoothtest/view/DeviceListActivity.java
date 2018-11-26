@@ -77,20 +77,13 @@ public class DeviceListActivity extends Activity {
 
     private void doDiscovery() {
         Log.d(TAG, "doDiscovery()");
-        
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
-            checkBTPermissions();
-            mBluetoothAdapter.startDiscovery();
-            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mBroadcastReceiver, discoverDevicesIntent);
         }
-        if (!mBluetoothAdapter.isDiscovering()) {
-            checkBTPermissions();
-            mBluetoothAdapter.startDiscovery();
-            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(mBroadcastReceiver, discoverDevicesIntent);
-        }
+        checkBTPermissions();
+        mBluetoothAdapter.startDiscovery();
+        IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mBroadcastReceiver, discoverDevicesIntent);
 
         setProgressBarIndeterminateVisibility(true);
         setTitle(R.string.scanning);
@@ -139,8 +132,8 @@ public class DeviceListActivity extends Activity {
     };
 
     private void checkBTPermissions() {
-        int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-        permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+        int permissionCheck = this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionCheck += this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
         if (permissionCheck != 0) {
             this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);

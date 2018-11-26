@@ -110,13 +110,13 @@ public class PhotosActivity extends AppCompatActivity implements PhotosScreen {
     }
 
     @Override
-    public void addBooksList(List<PhotoModel> list) {
+    public void addPhotosList(List<PhotoModel> list) {
         mPhotoListAdapter.setList(list);
     }
 
     @Override
-    public void showError(Throwable throwable) {
-        Toast.makeText(this, "Download error" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+    public void showError(String throwable) {
+        Toast.makeText(this, "Download error" + throwable, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -171,10 +171,8 @@ public class PhotosActivity extends AppCompatActivity implements PhotosScreen {
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         if (mChatService == null) {
             mChatService = new BluetoothService(mHandler);
-            mChatService.connect(device);
-        } else {
-            mChatService.connect(device);
         }
+        mChatService.connect(device);
     }
 
     private final Handler mHandler = new Handler() {

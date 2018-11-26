@@ -5,7 +5,7 @@ import com.rshtukaraxondevgroup.bluetoothtest.model.PhotoModel;
 import java.util.List;
 
 public interface PhotosScreen {
-    void addBooksList(List<PhotoModel> list);
+    void addPhotosList(List<PhotoModel> list);
 
-    void showError(Throwable throwable);
+    void showError(String throwable);
 }

@@ -13,7 +13,7 @@ import com.rshtukaraxondevgroup.bluetoothtest.repository.ReceivedPhotosRepositor
 
 import java.util.List;
 
-public class ReceivedPhotosActivity extends AppCompatActivity implements ReceivedPhotosScreen {
+public class ReceivedPhotosActivity extends AppCompatActivity implements PhotosScreen {
     private ReceivedPhotoPresenter mPresenter;
     private ReceivedPhotosRepository mReceivedPhotosRepository;
     private RecyclerView mRecyclerView;
@@ -34,12 +34,12 @@ public class ReceivedPhotosActivity extends AppCompatActivity implements Receive
     }
 
     @Override
-    public void addBooksList(List<PhotoModel> list) {
+    public void addPhotosList(List<PhotoModel> list) {
         mReceivedPhotoListAdapter.setList(list);
     }
 
     @Override
-    public void showError(Throwable throwable) {
-        Toast.makeText(this, "Download error" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+    public void showError(String throwable) {
+        Toast.makeText(this, "Download error" + throwable, Toast.LENGTH_SHORT).show();
     }
 }

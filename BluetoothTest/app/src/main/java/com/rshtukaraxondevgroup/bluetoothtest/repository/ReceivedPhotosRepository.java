@@ -14,7 +14,7 @@ public class ReceivedPhotosRepository {
     private PhotoDao mPhotoDao;
 
     public ReceivedPhotosRepository() {
-        this.mPhotoDao = App.getDatabase().bookDao();
+        this.mPhotoDao = App.getDatabase().photosDao();
     }
 
     public Single<List<PhotoModel>> getPhotosListFromDB() {

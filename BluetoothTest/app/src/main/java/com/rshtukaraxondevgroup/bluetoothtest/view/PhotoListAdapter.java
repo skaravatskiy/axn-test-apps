@@ -18,6 +18,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.rshtukaraxondevgroup.bluetoothtest.Constants.TYPE_GRID_LAYOUT_MANAGER;
+import static com.rshtukaraxondevgroup.bluetoothtest.Constants.TYPE_LINEAR_LAYOUT_MANAGER;
+
 public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.ViewHolder> {
     private List<PhotoModel> mPhotoModelList = new ArrayList<>();
     private boolean mIsVisibility = false;
@@ -31,7 +34,7 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case 1:
+            case TYPE_GRID_LAYOUT_MANAGER:
                 return new PhotoListAdapter.ViewHolder(LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.item_grid, parent, false));
             default:
@@ -47,7 +50,7 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
                 .into(holder.imageViewPhoto);
 
         switch (holder.getItemViewType()) {
-            case 0:
+            case TYPE_LINEAR_LAYOUT_MANAGER:
                 holder.textViewFullName.setText(mPhotoModelList.get(position).getTitle());
                 break;
         }
@@ -81,9 +84,9 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
     @Override
     public int getItemViewType(int position) {
         if (mIsLinearLayoutManager) {
-            return 0;
+            return TYPE_LINEAR_LAYOUT_MANAGER;
         } else {
-            return 1;
+            return TYPE_GRID_LAYOUT_MANAGER;
         }
     }
 

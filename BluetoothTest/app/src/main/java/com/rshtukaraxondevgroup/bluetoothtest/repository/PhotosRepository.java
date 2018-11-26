@@ -21,7 +21,7 @@ public class PhotosRepository {
 
     public PhotosRepository() {
         this.mApi = PhotoServiceProvider.getInstance().getClient().create(PhotosApi.class);
-        this.mPhotoDao = App.getDatabase().bookDao();
+        this.mPhotoDao = App.getDatabase().photosDao();
     }
 
     public Single<List<PhotoModel>> getPhotosList() {
@@ -37,7 +37,7 @@ public class PhotosRepository {
                 mPhotoDao.getByUrl(photoModel.getUrl())
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.io())
-                        .subscribe(bookModelDB -> {
+                        .subscribe(photoModelDB -> {
                             Log.d(TAG, "item No insert");
                         }, throwable -> {
                             mPhotoDao.insert(photoModel);

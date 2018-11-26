@@ -11,7 +11,7 @@ import static com.rshtukaraxondevgroup.bluetoothtest.Constants.DATABASE;
 
 @Database(entities = {PhotoModel.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
-    public abstract PhotoDao bookDao();
+    public abstract PhotoDao photosDao();
 
     private static AppDatabase INSTANCE;
 
