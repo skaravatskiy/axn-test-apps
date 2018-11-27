@@ -3,6 +3,7 @@ package com.rshtukaraxondevgroup.bluetoothtest.database;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
@@ -20,12 +21,6 @@ public interface PhotoDao {
     @Query("SELECT * FROM " + PHOTOS_TABLE)
     Single<List<PhotoModel>> getAll();
 
-    @Query("SELECT * FROM " + PHOTOS_TABLE + " WHERE " + PHOTOS_URL + "= :url")
-    Single<PhotoModel> getByUrl(String url);
-
-    @Insert
-    void insert(PhotoModel photoModel);
-
-    @Query("DELETE FROM " + PHOTOS_TABLE)
-    void deleteAll();
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertList(List<PhotoModel> list);
 }

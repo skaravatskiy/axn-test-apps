@@ -58,9 +58,6 @@ public class PhotosActivity extends AppCompatActivity implements PhotosScreen {
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mPhotoListAdapter = new PhotoListAdapter();
         mRecyclerView.setAdapter(mPhotoListAdapter);
-        if (mChatService == null) {
-            mChatService = new BluetoothService(mHandler);
-        }
 
         mPresenter = new PhotoPresenter(this, new PhotosRepository());
         mPresenter.getPhotosList();

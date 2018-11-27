@@ -8,7 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -17,12 +21,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rshtukaraxondevgroup.bluetoothtest.R;
 
 import java.util.Set;
 
 import static com.rshtukaraxondevgroup.bluetoothtest.Constants.EXTRA_DEVICE_ADDRESS;
+import static com.rshtukaraxondevgroup.bluetoothtest.Constants.MY_PERMISSION_ACCESS_COURSE_LOCATION;
 
 public class DeviceListActivity extends Activity {
     private static final String TAG = DeviceListActivity.class.getCanonicalName();
@@ -58,7 +64,7 @@ public class DeviceListActivity extends Activity {
         mNewDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        checkBTPermissions();
         getPairedDevices();
     }
 
@@ -72,6 +78,22 @@ public class DeviceListActivity extends Activity {
             this.unregisterReceiver(mBroadcastReceiver);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_COURSE_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkBTPermissions();
+                } else {
+                    Toast.makeText(this, "Location permission not granted", Toast.LENGTH_SHORT).show();
+                    setProgressBarIndeterminateVisibility(false);
+                    setTitle(R.string.app_name);
+                }
+                break;
+            }
         }
     }
 
@@ -132,11 +154,11 @@ public class DeviceListActivity extends Activity {
     };
 
     private void checkBTPermissions() {
-        int permissionCheck = this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-        permissionCheck += this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (permissionCheck != 0) {
-            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSION_ACCESS_COURSE_LOCATION);
         }
     }
 }

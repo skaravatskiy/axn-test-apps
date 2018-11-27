@@ -39,6 +39,8 @@ public class Constants {
 
     public static final int TYPE_LINEAR_LAYOUT_MANAGER = 0;
     public static final int TYPE_GRID_LAYOUT_MANAGER = 1;
+
+    public static final int MY_PERMISSION_ACCESS_COURSE_LOCATION = 11;
 }
 
 
