@@ -1,0 +1,12 @@
+ext {
+    supportVersion = '27.1.1'
+    supportConstraintVersion = '1.1.3'
+    junitVersion = '4.12'
+    supportTestVersion = '1.0.2'
+    supportTestEspressoVersion = '3.0.2'
+    retrofitVersion = '2.4.0'
+    retrofitRxjava2Version = '2.3.0'
+    rxjava2Version = '2.1.0'
+    bumptechGlideVersion = '4.8.0'
+    roomVersion = '1.1.1'
+}
