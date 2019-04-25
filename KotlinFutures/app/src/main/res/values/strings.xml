@@ -1,0 +1,10 @@
+<resources>
+  <string name="app_name">KotlinFutures</string>
+
+  <string name="age">%1$d years old</string>
+  <string name="tv_cell_phone">Cell phone</string>
+  <string name="tv_description_email">Email</string>
+  <string name="tv_gender_description">Gender</string>
+  <string name="tv_date_of_birth_description">Date of birth</string>
+  <string name="tv_location_description">Location</string>
+</resources>
