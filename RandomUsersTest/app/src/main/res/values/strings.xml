@@ -1,0 +1,14 @@
+<resources>
+  <string name="app_name">RandomUsers</string>
+
+  <string name="tv_age">%1$d years old</string>
+  <string name="tv_cell_phone">Cell phone</string>
+  <string name="tv_description_email">Email</string>
+  <string name="tv_gender_description">Gender</string>
+  <string name="tv_date_of_birth_description">Date of birth</string>
+  <string name="tv_location_description">Location</string>
+    <string name="menu_name_sort">Name sort</string>
+  <string name="menu_age_sort">Age sort</string>
+  <string name="menu_location_sort">Location sort</string>
+
+</resources>

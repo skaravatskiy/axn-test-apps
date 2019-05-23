@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="size_button_call">64dp</dimen>
+  <dimen name="size_image_profile">128dp</dimen>
+
+  <dimen name="margin_large">32dp</dimen>
+  <dimen name="margin_big">24dp</dimen>
+  <dimen name="margin">16dp</dimen>
+  <dimen name="margin_middle">12dp</dimen>
+  <dimen name="margin_short">8dp</dimen>
+  <dimen name="margin_tiny">4dp</dimen>
+
+  <dimen name="font_size_large">24sp</dimen>
+  <dimen name="font_size_big">18sp</dimen>
+  <dimen name="font_size">16sp</dimen>
+  <dimen name="font_size_middle">14sp</dimen>
+  <dimen name="font_size_short">12sp</dimen>
+</resources>
