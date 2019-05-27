@@ -1,6 +1,6 @@
 package com.example.kotlinfutures
 
-import com.example.kotlinfutures.model.Encryption
+import com.example.kotlinfutures.model.common.Encryption
 import org.junit.Test
 
 import org.junit.Assert.*

@@ -1,4 +1,4 @@
-package com.example.kotlinfutures.model
+package com.example.kotlinfutures.model.local
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
@@ -17,8 +17,10 @@ data class User(
     var login: String,
     val pass: String
 ) : Parcelable {
+
     companion object {
-        val EXTRA_LOGIN: String = "EXTRA_USER"
-        val EXTRA_ENCRYPT: String = "EXTRA_ENCRYPT"
+        const val EXTRA_LOGIN: String = "EXTRA_USER"
+        const val EXTRA_ENCRYPT: String = "EXTRA_ENCRYPT"
+
     }
 }

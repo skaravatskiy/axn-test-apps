@@ -1,10 +1,23 @@
 <resources>
-  <string name="app_name">KotlinFutures</string>
+    <string name="app_name">KotlinFutures</string>
 
-  <string name="age">%1$d years old</string>
-  <string name="tv_cell_phone">Cell phone</string>
-  <string name="tv_description_email">Email</string>
-  <string name="tv_gender_description">Gender</string>
-  <string name="tv_date_of_birth_description">Date of birth</string>
-  <string name="tv_location_description">Location</string>
+    <!-- Detail activity -->
+    <string name="text_age">%1$d years old</string>
+    <string name="text_cell_phone">Cell phone</string>
+    <string name="text_description">Email</string>
+    <string name="text_gender_description">Gender</string>
+    <string name="text_dob_description">Date of birth</string>
+    <string name="text_location_description">Location</string>
+
+    <!-- Login activity -->
+    <string name="button_cancel">Cancel</string>
+    <string name="button_form_sign_in">Use form for sign in</string>
+    <string name="text_welcome_sing_in">Hello, sing in</string>
+    <string name="hint_login">Login</string>
+    <string name="hint_password">Password</string>
+    <string name="text_sign_in">Sign In</string>
+
+    <!-- Fingerprint dialog fragment -->
+    <string name="fingerprint_help">Confirm fingerprint to continue.</string>
+    <string name="fingerprint_error">Wrong finger print, please try again</string>
 </resources>
