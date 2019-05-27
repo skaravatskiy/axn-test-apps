@@ -1,4 +1,4 @@
-package com.example.kotlinfutures.model.poko
+package com.example.kotlinfutures.model.network.response
 
 import com.google.gson.annotations.SerializedName
 
@@ -14,7 +14,7 @@ data class Location(
     val timezone: Timezone,
 
     @field:SerializedName("postcode")
-    val postcode: Int,
+    val postcode: String,
 
     @field:SerializedName("coordinates")
     val coordinates: Coordinates,

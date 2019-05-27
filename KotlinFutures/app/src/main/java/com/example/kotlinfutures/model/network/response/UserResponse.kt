@@ -1,4 +1,4 @@
-package com.example.kotlinfutures.model.poko
+package com.example.kotlinfutures.model.network.response
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,8 +1,8 @@
-package com.example.kotlinfutures.model.poko
+package com.example.kotlinfutures.model.network.response
 
 import com.google.gson.annotations.SerializedName
 
-data class Dob(
+data class Registered(
 
     @field:SerializedName("date")
     val date: String,

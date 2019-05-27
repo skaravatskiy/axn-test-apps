@@ -1,6 +1,7 @@
-package com.example.kotlinfutures.model
+package com.example.kotlinfutures.model.map
 
-import com.example.kotlinfutures.model.poko.RandomUserInfo
+import com.example.kotlinfutures.model.local.User
+import com.example.kotlinfutures.model.network.response.RandomUserInfo
 
 class Mapper {
     companion object {

@@ -1,4 +1,4 @@
-package com.example.kotlinfutures.model
+package com.example.kotlinfutures.model.local
 
 interface Repository {
 
